@@ -1,0 +1,53 @@
+/* chrome apps don't seem to scroll by default. */
+html {
+  overflow-y: scroll;
+}
+
+.distributed-box {
+  display: box;
+  display: -webkit-box;
+
+  box-pack: justify;
+  -webkit-box-pack: justify;
+
+  box-align: center;
+  -webkit-box-align: center;
+}
+
+.centered {
+  box-pack: center;
+  -webkit-box-pack: center;
+}
+
+#jog-panel table {
+  display: inline-table;
+	text-align: center;
+	vertical-align: middle;
+}
+
+#txt-command-log, #input-control-cmd {
+  font-family: monospace;
+}
+
+#console-log {
+	font-family: monospace;
+	font-size: smaller;
+  overflow-y: scroll;
+  height: 20em;
+}
+.log-user-entry {
+  display: block;
+  background-color: #F8F8F8;
+}
+.log-user-entry:before {
+  content: "> ";
+}
+
+.btn-estop {
+  border-radius: 50px;
+  border-width: 5px;
+  font-size: 24pt;
+  height: 100px;
+  margin: 20px;
+  width: 100px;
+}

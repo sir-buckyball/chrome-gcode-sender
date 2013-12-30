@@ -1,0 +1,21 @@
+{
+  "name": "gcode-sender",
+  "version": "2013.12.29",
+  "manifest_version": 2,
+  "minimum_chrome_version": "33",
+  "description": "Send gcode files to a CNC machine.",
+  "icons": {
+    "128": "icon_128.png"
+  },
+  "app": {
+    "background": {
+      "scripts": [
+        "background.js"
+      ]
+    }
+  },
+  "permissions": [
+    "serial",
+    "storage"
+  ]
+}
