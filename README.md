@@ -13,6 +13,13 @@ I feel that [Chrome OS](http://en.wikipedia.org/wiki/Chrome_OS) machines have qu
 The common place alternative is an out of date Windows machine which is usually disconnected from the network, only has local accounts, and is running unknown (potentially malicious) software. Files are typically transferred by flash-drive-sneaker-net.
 
 
+How do I install it?
+--------------------
+The easiest way to install this extension is to download it from the Chrome Web Store (<https://chrome.google.com/webstore/detail/gcode-sender/ngncibnakmabjlfpadjagnbdjbhoelom>).
+
+If you want to develop for it, you can load the 'src' directory as an unpacked extension. By going to <chrome://extensions/>, ensure 'developer mode' is checked and you should see a button to load it from your local file system.
+
+
 What libraries did you use?
 ---------------------------
 * [paper.js](http://paperjs.org/) - canvas rendering library
