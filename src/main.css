@@ -34,6 +34,7 @@ html {
 	font-size: smaller;
   overflow-y: scroll;
   height: 20em;
+  -webkit-user-select: text;
 }
 .log-user-entry {
   display: block;
