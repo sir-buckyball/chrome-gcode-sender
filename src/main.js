@@ -19,8 +19,45 @@ window.settings = {
 // A flag used for determining if we are waiting for an ok from the workspace.
 window.workspacePendingAck = false;
 
+window.userWarnings = {};
+
 // TODO: make this configurable.
 var CONSOLE_MAX_SCROLLBACK = 200;
+
+/**
+ * Display a warning to the user. Messages are grouped so
+ * they can be cleared when the condition no longer applies.
+ *
+ * @param {string} group The group the warning belongs to
+ * @param {string} msg The message of the warning
+ */
+function showWarning(group, msg) {
+  console.warn(msg);
+
+  if (!window.userWarnings[group]) {
+    window.userWarnings[group] = [];
+  }
+  window.userWarnings[group].push(msg);
+  renderUserWarnings();
+}
+
+function clearWarningGroup(group) {
+  delete window.userWarnings[group];
+  renderUserWarnings();
+}
+
+function renderUserWarnings() {
+  $("#warnings-user").html("");
+  for (var g in window.userWarnings) {
+    var d = $('<div class="alert alert-warning alert-dismissable"></div>');
+    d.append($('<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'));
+    for (var i = 0; i < window.userWarnings[g].length; i++) {
+      $("<div/>", {"text": window.userWarnings[g][i]}).appendTo(d);
+    }
+    d.appendTo("#warnings-user");
+  }
+  $("#warnings-user").show();
+}
 
 function handleFileSelect(evt) {
   evt.stopPropagation();
@@ -140,7 +177,6 @@ function renderGcode(commandSequence) {
   var warnings = {};
 
   // try to render in real size (default to mm)
-  // TODO: use workspace for scaling; also scale by component vectors.
   var viewWidth = $("#render-canvas-holder").width();
   var viewHeight = chrome.app.window.current().getBounds().height -
       $("#render-canvas-holder").position().top - 18;
@@ -474,7 +510,7 @@ function logCommand(cmd, isSend) {
 function sendCommandToSerialConnection(cmd) {
   // make sure we have a device available.
   if (!window.workspaceConnectionId) {
-    console.warn("no device connection available.");
+    showWarning("cmd", "no device connection available.");
     return;
   }
 
@@ -482,7 +518,7 @@ function sendCommandToSerialConnection(cmd) {
   chrome.serial.send(window.workspaceConnectionId,
 		     str2ab(cmd + "\r\n"), function(info) {
     if (info.error) {
-      console.warn("failed to send command: " + info.error);
+      showWarning("cmd", "failed to send command: " + info.error);
     }    
   });
 
@@ -576,6 +612,9 @@ function getStepSize() {
 function configureNavBar() {
   $("#btn-connect").show();
   $("#btn-connect").click(function(e) {
+    // Clear any current warnings.
+    clearWarningGroup("connection");
+
     // If there is no connection port, send the user to the settings path.
     if (!window.settings["workspace-port"]) {
       $('#main-tabs a[href="#view-settings"]').tab('show');
@@ -597,17 +636,19 @@ function configureNavBar() {
          "' with options: " + JSON.stringify(options));
     chrome.serial.connect(window.settings["workspace-port"], options, function(info) {
 	    if (info == null) {
-    		// TODO: Display a warning to the user.
-    		console.warn("Unable to connect to " + window.settings["workspace-port"]);
+    		showWarning("connection", "Unable to connect to " + window.settings["workspace-port"]);
     		$("#btn-connect").prop("disabled", 0);
     		$("#btn-connect").show();
     		return;
 	    }
 
       console.log("serial connection obtained:\n" + JSON.stringify(info));
-      if (info.bitrate != window.settings["workspace-baud"]) {
-        console.warn("serial connection does not match requested baud rate! (" +
-         info.bitrate + " instead of " + window.settings["workspace-baud"] + ")");
+
+      for (k in options) {
+        if (options[k] != info[k]) {
+          showWarning("connection", "Chrome did not use requested serial connection option. [" +
+              k + "; expected:" + options[k] + ", actual:" + info[k] + "]");
+        }
       }
 
       window.workspaceConnectionId = info.connectionId;
@@ -664,7 +705,7 @@ function configureControlPanel() {
 
   // Log errors
   chrome.serial.onReceiveError.addListener(function(info) {
-    console.warn("error with serial communication: " + info.error);
+    showWarning("connection", "error with serial communication: " + info.error);
   });
 
   // configure the jog controls.
