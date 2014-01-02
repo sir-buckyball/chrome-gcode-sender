@@ -7,9 +7,15 @@ void setup() {
 
 void loop() {
   if (Serial.available()) {
-    if (Serial.read() == '\n') {
+    char c = Serial.read();
+    if (c == '\n') {
       delay(500);
       Serial.write("ok\n");
+    } else if (c == '$') {
+       Serial.write("helpful output\n");
+       Serial.write("--------------\n");
+       Serial.write("$  - this output\n");
+       Serial.write("\\n - prints 'ok'\n");
     }
     
     // TODO: validate gcode commands?
