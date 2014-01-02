@@ -640,7 +640,6 @@ function connectToSerialPort() {
     "ctsFlowControl":false,
     "dataBits":"eight",
     "parityBit":"no",
-    "sendTimeout": 5000,
     "stopBits":"one"
   };
   console.log("connecting to '" + window.settings["workspace-port"] +
