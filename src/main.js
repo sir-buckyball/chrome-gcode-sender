@@ -483,19 +483,32 @@ function logCommand(cmd, isSend) {
     }
   }
 
-  // If we get two remove entries, join them.
+  // Determine the node to add the incoming text to. Since incoming text
+  // can be broken into multiple calls to this funciton, we want to join
+  // blocks and only split when we detect interleving or a newline.
+  var nodeToWriteTo;
   var lastChild = c.children().last();
   if (!isSend && lastChild && lastChild.hasClass("log-remote-entry")) {
-    lastChild.text(lastChild.text() + cmd);
-    c.scrollTop(10000);
-    return;
+    // incoming data may be split, so grab the last element instead of a new one.
+    nodeToWriteTo = lastChild;
+  } else {
+    nodeToWriteTo = $("<div/>", {
+      "class": isSend ? "log-user-entry" : "log-remote-entry"
+    });
+    nodeToWriteTo.appendTo(c);
   }
 
-  // Append the entry to our console.
-  c.append($("<div/>", {
-    "class": isSend ? "log-user-entry" : "log-remote-entry",
-    "text": cmd
-  }));
+  // Add each line to the console output.
+  lines = cmd.split("\n");
+  for (var i = 0; i < lines.length; i++) {
+    nodeToWriteTo.text(nodeToWriteTo.text() + lines[i]);
+    if (i < lines.length - 1) {
+      nodeToWriteTo = $("<div/>", {
+        "class": isSend ? "log-user-entry" : "log-remote-entry"
+      });
+      nodeToWriteTo.appendTo(c);
+    }
+  }
 
   // Limit our history (it could be megs of data when processing a file).
   if (c.children().length > CONSOLE_MAX_SCROLLBACK) {
