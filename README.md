@@ -20,6 +20,22 @@ The easiest way to install this extension is to download it from the Chrome Web 
 If you want to develop for it, you can load the 'src' directory as an unpacked extension. By going to <chrome://extensions/>, ensure 'developer mode' is checked and you should see a button to load it from your local file system.
 
 
+Are there cool keyboard commands?
+----------------------------------
+The control panel has the following:
+<pre>
+'←', 'j' - jog X axis -N
+'→', 'l' - jog X axis +N
+'↓', 'k' - jog Y axit -N
+'↑', 'i' - jog Y axis +N
+'z' - jog Z axis -N
+'a' - jog Z axis +N
+'+' - increment jump size by 10x
+'-' - decrement jump size by 10x
+'/' - focus command input
+'esc' - blur command input
+</pre>
+
 What libraries did you use?
 ---------------------------
 * [paper.js](http://paperjs.org/) - canvas rendering library
