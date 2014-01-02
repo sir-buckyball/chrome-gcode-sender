@@ -52,3 +52,7 @@ html {
   margin: 20px;
   width: 100px;
 }
+
+.alert {
+  -webkit-user-select: text;
+}
