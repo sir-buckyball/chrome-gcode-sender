@@ -474,9 +474,6 @@ function logCommand(cmd, isSend) {
     // The lookback character is needed because the 2 byte 'ok' can be split.
     if ((incomingCommandLookbackChar + cmd).indexOf("ok") != -1) {
       window.workspacePendingAck = false;
-
-      // Trigger our queue processing instead of waiting anymore.
-      setTimeout(processCommandQueue, 0);
     }
     if (cmd.length > 0) {
       incomingCommandLookbackChar = cmd.charAt(cmd.length - 1);
@@ -929,5 +926,5 @@ $(document).ready(function() {
   configureKeyboard();
 
   // Process an element from the command queue every few ms.
-  setInterval(processCommandQueue, 50);
+  setInterval(processCommandQueue, 100);
 });
