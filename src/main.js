@@ -592,8 +592,8 @@ function emergencyStop() {
   // Send the command to perform an emergency stop.
   sendCommandToSerialConnection("M112", true);
 
-  // Disconnect from the machine.
-  $("#btn-disconnect").click();
+  // Reset the serial connection (some machines respond to this instead of M112).
+  resetSerialConnection();
 
   // Update the UI.
   $("#lbl-enqueued-command-count").text(window.workspaceCommandQueue.length);
@@ -622,57 +622,74 @@ function getStepSize() {
   return Math.pow(10, parseInt($("#input-stepsize").val()));
 }
 
-function configureNavBar() {
-  $("#btn-connect").show();
-  $("#btn-connect").click(function(e) {
-    // Clear any current warnings.
-    clearWarningGroup("connection");
+/**
+ * Connect to the configured serial port.
+ */
+function connectToSerialPort() {
+  // Clear any current warnings.
+  clearWarningGroup("connection");
 
-    // If there is no connection port, send the user to the settings path.
-    if (!window.settings["workspace-port"]) {
-      $('#main-tabs a[href="#view-settings"]').tab('show');
+  // If there is no connection port, send the user to the settings path.
+  if (!window.settings["workspace-port"]) {
+    $('#main-tabs a[href="#view-settings"]').tab('show');
+    return;
+  }
+
+  // fast user feedback that something happened.
+  $("#btn-connect").prop("disabled", 1);
+
+  var options = {
+    "bitrate": window.settings["workspace-baud"],
+    "ctsFlowControl":false,
+    "dataBits":"eight",
+    "parityBit":"no",
+    "sendTimeout": 5000,
+    "stopBits":"one"
+  };
+  console.log("connecting to '" + window.settings["workspace-port"] +
+       "' with options: " + JSON.stringify(options));
+  chrome.serial.connect(window.settings["workspace-port"], options, function(info) {
+    if (info == null) {
+      showWarning("connection", "Unable to connect to " + window.settings["workspace-port"]);
+      $("#btn-connect").prop("disabled", 0);
+      $("#btn-connect").show();
       return;
     }
 
-    // fast user feedback that something happened.
-    $("#btn-connect").prop("disabled", 1);
+    console.log("serial connection obtained:\n" + JSON.stringify(info));
 
-    var options = {
-      "bitrate": window.settings["workspace-baud"],
-      "ctsFlowControl":false,
-      "dataBits":"eight",
-      "parityBit":"no",
-      "sendTimeout": 5000,
-      "stopBits":"one"
-    };
-    console.log("connecting to '" + window.settings["workspace-port"] +
-         "' with options: " + JSON.stringify(options));
-    chrome.serial.connect(window.settings["workspace-port"], options, function(info) {
-	    if (info == null) {
-    		showWarning("connection", "Unable to connect to " + window.settings["workspace-port"]);
-    		$("#btn-connect").prop("disabled", 0);
-    		$("#btn-connect").show();
-    		return;
-	    }
-
-      console.log("serial connection obtained:\n" + JSON.stringify(info));
-
-      for (k in options) {
-        if (options[k] != info[k]) {
-          showWarning("connection", "Chrome did not use requested serial connection option. [" +
-              k + "; expected:" + options[k] + ", actual:" + info[k] + "]");
-        }
+    for (k in options) {
+      if (options[k] != info[k]) {
+        showWarning("connection", "Chrome did not use requested serial connection option. [" +
+            k + "; expected:" + options[k] + ", actual:" + info[k] + "]");
       }
+    }
 
-      window.workspaceConnectionId = info.connectionId;
+    window.workspaceConnectionId = info.connectionId;
 
-      $("#btn-connect").prop("disabled", 0);
+    $("#btn-connect").prop("disabled", 0);
 
-      $("#btn-connect").hide();
-      $("#btn-disconnect").show();
-      $(".connection-enabled").prop("disabled", 0);
-    });
+    $("#btn-connect").hide();
+    $("#btn-disconnect").show();
+    $(".connection-enabled").prop("disabled", 0);
   });
+}
+
+/**
+ * Reset the serial connection by disconnecting and reconnecting.
+ */
+function resetSerialConnection() {
+  if (window.workspaceConnectionId) {
+      console.log("resetting serial connection");
+      chrome.serial.disconnect(window.workspaceConnectionId, function(result) {
+        connectToSerialPort();
+      });
+  }
+}
+
+function configureNavBar() {
+  $("#btn-connect").show();
+  $("#btn-connect").click(connectToSerialPort);
 
   $("#btn-disconnect").hide();
   $("#btn-disconnect").click(function(e) {
