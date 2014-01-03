@@ -19,7 +19,12 @@ window.settings = {
 // A flag used for determining if we are waiting for an ok from the workspace.
 window.workspacePendingAck = false;
 
+// Warnings which should be displayed to the user.
 window.userWarnings = {};
+
+// The history of manual commands that the user has entered.
+window.manualInputHistory = [];
+window.manualInputPosition = 0;
 
 // TODO: make this configurable.
 var CONSOLE_MAX_SCROLLBACK = 200;
@@ -720,7 +725,10 @@ function configureControlPanel() {
 
   // configure the send button.
   $("#btn-control-send-cmd").click(function(e) {
-    enqueueCommandsToSend([$("#input-control-cmd").val()]);
+    var c = $("#input-control-cmd").val();
+    window.manualInputHistory.push(c);
+    window.manualInputPosition = window.manualInputHistory.length;
+    enqueueCommandsToSend([c]);
     $("#input-control-cmd").val("");
   });
 
@@ -849,10 +857,27 @@ function configureKeyboard() {
     e.stopPropagation();
 
     if (e.keyCode == 27) { // escape; blur the manual command input.
-        // the delay is to allow the current event propagation to finish.
-        setTimeout(function() {
-          $("#input-control-cmd").blur();
-        }, 1);
+      // the delay is to allow the current event propagation to finish.
+      setTimeout(function() {
+        $("#input-control-cmd").blur();
+      }, 1);
+
+    } else if (e.keyCode == 38) { // up arrow; show previous history position.
+      window.manualInputPosition = Math.max(window.manualInputPosition - 1, 0);
+      var c = ((window.manualInputPosition < window.manualInputHistory.length) ?
+          window.manualInputHistory[window.manualInputPosition] : "");
+      $("#input-control-cmd").val(c);
+      setTimeout(function() {
+        $("#input-control-cmd")[0].setSelectionRange(c.length, c.length);
+      }, 0);
+    } else if (e.keyCode == 40) { // down arrow; show next history position.
+      window.manualInputPosition = Math.min(window.manualInputPosition + 1, window.manualInputHistory.length);
+      var c = ((window.manualInputPosition < window.manualInputHistory.length) ?
+          window.manualInputHistory[window.manualInputPosition] : "");
+      $("#input-control-cmd").val(c);
+      setTimeout(function() {
+        $("#input-control-cmd")[0].setSelectionRange(c.length, c.length);
+      }, 0);
     }
   });
 
