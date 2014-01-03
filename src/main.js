@@ -543,7 +543,7 @@ function enqueueCommandsToSend(commands) {
   $("#lbl-enqueued-command-count").text(window.workspaceCommandQueue.length);
 
   // disable manual input since the user would likely mess up the program.
-  if (window.workspaceCommandQueue.length > 0) {
+  if (window.workspaceCommandQueue.length > 5) {
     $(".connection-enabled").prop("disabled", 1);
   }
 }
@@ -720,7 +720,7 @@ function configureControlPanel() {
 
   // configure the send button.
   $("#btn-control-send-cmd").click(function(e) {
-    sendCommandToSerialConnection($("#input-control-cmd").val());
+    enqueueCommandsToSend([$("#input-control-cmd").val()]);
     $("#input-control-cmd").val("");
   });
 
@@ -740,37 +740,31 @@ function configureControlPanel() {
   }).change();
 
   $("#btn-x-up").click(function(e) {
-    sendCommandToSerialConnection("G91");
-    sendCommandToSerialConnection("G1 X" + getStepSize());
+    enqueueCommandsToSend(["G91", "G1 X" + getStepSize()]);
   });
   $("#btn-x-down").click(function(e) {
-    sendCommandToSerialConnection("G91");
-    sendCommandToSerialConnection("G1 X-" + getStepSize());
+    enqueueCommandsToSend(["G91", "G1 X-" + getStepSize()]);
   });
   $("#btn-x-home").click(function(e) {
-    sendCommandToSerialConnection("G28 X0");
+    enqueueCommandsToSend(["G28 X0"]);
   });
   $("#btn-y-up").click(function(e) {
-    sendCommandToSerialConnection("G91");
-    sendCommandToSerialConnection("G1 Y" + getStepSize());
+    enqueueCommandsToSend(["G91", "G1 Y" + getStepSize()]);
   });
   $("#btn-y-down").click(function(e) {
-    sendCommandToSerialConnection("G91");
-    sendCommandToSerialConnection("G1 Y-" + getStepSize());
+    enqueueCommandsToSend(["G91", "G1 Y-" + getStepSize()]);
   });
   $("#btn-y-home").click(function(e) {
-    sendCommandToSerialConnection("G28 Y0");
+    enqueueCommandsToSend(["G28 Y0"]);
   });
   $("#btn-z-up").click(function(e) {
-    sendCommandToSerialConnection("G91");
-    sendCommandToSerialConnection("G1 Z" + getStepSize());
+    enqueueCommandsToSend(["G91", "G1 Z" + getStepSize()]);
   });
   $("#btn-z-down").click(function(e) {
-    sendCommandToSerialConnection("G91");
-    sendCommandToSerialConnection("G1 Z-" + getStepSize());
+    enqueueCommandsToSend(["G91", "G1 Z-" + getStepSize()]);
   });
   $("#btn-z-home").click(function(e) {
-    sendCommandToSerialConnection("G28 Z0");
+    enqueueCommandsToSend(["G28 Z0"]);
   });
   $("#btn-stepsize-up").click(function(e) {
     $("#input-stepsize").val(parseInt($("#input-stepsize").val()) + 1).change();
