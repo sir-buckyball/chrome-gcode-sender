@@ -56,3 +56,9 @@ html {
 .alert {
   -webkit-user-select: text;
 }
+
+.is-ack {
+  color: #006600;
+  float: right;
+  margin-top: -3ex;
+}

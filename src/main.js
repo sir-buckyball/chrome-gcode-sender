@@ -505,6 +505,16 @@ function logCommand(cmd, isSend) {
   lines = cmd.split("\n");
   for (var i = 0; i < lines.length; i++) {
     nodeToWriteTo.text(nodeToWriteTo.text() + lines[i]);
+
+    // Tag nodes which are just an ack.
+    if (!isSend) {
+      if (nodeToWriteTo.text() == "ok") {
+        nodeToWriteTo.addClass("is-ack");
+      } else {
+        nodeToWriteTo.removeClass("is-ack");
+      }
+    }
+
     if (i < lines.length - 1) {
       nodeToWriteTo = $("<div/>", {
         "class": isSend ? "log-user-entry" : "log-remote-entry"
