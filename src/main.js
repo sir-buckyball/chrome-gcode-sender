@@ -18,6 +18,7 @@ window.settings = {
 
 // A flag used for determining if we are waiting for an ok from the workspace.
 window.workspacePendingAck = false;
+window.workspaceIsRelativeMode = false;
 
 // Warnings which should be displayed to the user.
 window.userWarnings = {};
@@ -523,6 +524,10 @@ function logCommand(cmd, isSend) {
  * Send a command to an active serial connection.
  */
 function sendCommandToSerialConnection(cmd) {
+  if (cmd.indexOf("G90") != -1) {
+        window.workspaceIsRelativeMode = false;
+  }
+
   // make sure we have a device available.
   if (!window.workspaceConnectionId) {
     showWarning("cmd", "no device connection available.");
@@ -625,9 +630,27 @@ function getStepSize() {
 }
 
 /**
+ * Enqueue a command to perform a relative move. The global step size
+ * will be used.
+ *
+ * @param {string} axis The axis to move about (eg. 'X-')
+ */
+function enqueueRelativeMove(axis) {
+  var commands = [];
+  if (!window.workspaceIsRelativeMode) {
+    commands.push("G91");
+    window.workspaceIsRelativeMode = true;
+  }
+  commands.push("G1 " + axis + getStepSize());
+  enqueueCommandsToSend(commands);
+}
+
+/**
  * Connect to the configured serial port.
  */
 function connectToSerialPort() {
+  window.workspaceIsRelativeMode = false;
+
   // Clear any current warnings.
   clearWarningGroup("connection");
 
@@ -748,28 +771,28 @@ function configureControlPanel() {
   }).change();
 
   $("#btn-x-up").click(function(e) {
-    enqueueCommandsToSend(["G91", "G1 X" + getStepSize()]);
+    enqueueRelativeMove("X");
   });
   $("#btn-x-down").click(function(e) {
-    enqueueCommandsToSend(["G91", "G1 X-" + getStepSize()]);
+    enqueueRelativeMove("X-");
   });
   $("#btn-x-home").click(function(e) {
     enqueueCommandsToSend(["G28 X0"]);
   });
   $("#btn-y-up").click(function(e) {
-    enqueueCommandsToSend(["G91", "G1 Y" + getStepSize()]);
+    enqueueRelativeMove("Y");
   });
   $("#btn-y-down").click(function(e) {
-    enqueueCommandsToSend(["G91", "G1 Y-" + getStepSize()]);
+    enqueueRelativeMove("Y-");
   });
   $("#btn-y-home").click(function(e) {
     enqueueCommandsToSend(["G28 Y0"]);
   });
   $("#btn-z-up").click(function(e) {
-    enqueueCommandsToSend(["G91", "G1 Z" + getStepSize()]);
+    enqueueRelativeMove("Z");
   });
   $("#btn-z-down").click(function(e) {
-    enqueueCommandsToSend(["G91", "G1 Z-" + getStepSize()]);
+    enqueueRelativeMove("Z-");
   });
   $("#btn-z-home").click(function(e) {
     enqueueCommandsToSend(["G28 Z0"]);
