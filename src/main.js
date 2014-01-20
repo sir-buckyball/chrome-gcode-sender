@@ -706,6 +706,9 @@ function connectToSerialPort() {
     $("#btn-connect").hide();
     $("#btn-disconnect").show();
     $(".connection-enabled").prop("disabled", 0);
+
+    // Don't fall asleep while controlling a machine.
+    chrome.power.requestKeepAwake("system");
   });
 }
 
@@ -727,6 +730,9 @@ function configureNavBar() {
 
   $("#btn-disconnect").hide();
   $("#btn-disconnect").click(function(e) {
+    // If we're disconnected, we don't need to keep the system awake.
+    chrome.power.releaseKeepAwake();
+
     // fast user feedback that something happened.
     if (window.workspaceConnectionId) {
       $("#btn-disconnect").prop("disabled", 1);
