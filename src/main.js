@@ -19,6 +19,7 @@ window.settings = {
 // A flag used for determining if we are waiting for an ok from the workspace.
 window.workspacePendingAck = false;
 window.workspaceIsRelativeMode = false;
+window.workspaceIsMm = false;
 
 // Warnings which should be displayed to the user.
 window.userWarnings = {};
@@ -535,7 +536,13 @@ function logCommand(cmd, isSend) {
  */
 function sendCommandToSerialConnection(cmd) {
   if (cmd.indexOf("G90") != -1) {
-        window.workspaceIsRelativeMode = false;
+    window.workspaceIsRelativeMode = false;
+  } else if (cmd.indexOf("G91") != -1) {
+    window.workspaceIsRelativeMode = true;
+  } else if (cmd.indexOf("G20") != -1) {
+    window.workspaceIsMm = false;
+  } else if (cmd.indexOf("G21") != -1) {
+    window.workspaceIsMm = true;
   }
 
   // make sure we have a device available.
@@ -649,7 +656,9 @@ function enqueueRelativeMove(axis) {
   var commands = [];
   if (!window.workspaceIsRelativeMode) {
     commands.push("G91");
-    window.workspaceIsRelativeMode = true;
+  }
+  if (!window.workspaceIsMm) {
+    commands.push("G21");
   }
   commands.push("G1 " + axis + getStepSize());
   enqueueCommandsToSend(commands);
@@ -660,6 +669,7 @@ function enqueueRelativeMove(axis) {
  */
 function connectToSerialPort() {
   window.workspaceIsRelativeMode = false;
+  window.workspaceIsMm = false;
 
   // Clear any current warnings.
   clearWarningGroup("connection");
