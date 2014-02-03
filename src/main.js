@@ -81,8 +81,9 @@ function handleFileSelect(evt) {
 
   // only examine the first file.
   var f = files[0];
-  $("#render-canvas-heading").html("<strong>" + escape(f.name) + "</strong> <small>(" + f.size +
-      " bytes, last modified " + moment(f.lastModifiedDate).fromNow() + ")</small>");
+  $("#render-canvas-heading").html($("<strong/>").text(f.name));
+  $("#render-canvas-heading").append($("<small/>").text(
+      " (last modified " + moment(f.lastModifiedDate).fromNow() + ")"));
 
   if (files.length > 0) {
     processFile(files[0]);
