@@ -10,9 +10,9 @@ void loop() {
     char c = Serial.read();
     if (c == '\n') {
       delay(500);
-      Serial.write("ok\n\n");
+      Serial.write("ok\r\n");
       Serial.flush();
-      Serial.write("ok\n\n");
+      Serial.write("ok\r\n");
     } else if (c == '$') {
        Serial.write("helpful output\n");
        Serial.write("--------------\n");

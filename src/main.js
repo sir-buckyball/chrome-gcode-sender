@@ -523,7 +523,9 @@ function logCommand(cmd, isSend) {
   // Add each line to the console output.
   lines = cmd.split("\n");
   for (var i = 0; i < lines.length; i++) {
-    nodeToWriteTo.text(nodeToWriteTo.text() + makeHumanReadable(lines[i]));
+    var line = lines[i];
+    line = line.replace("\r", "");
+    nodeToWriteTo.text(nodeToWriteTo.text() + makeHumanReadable(line));
 
     // Tag nodes which are just an ack.
     if (!isSend) {
