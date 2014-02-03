@@ -464,6 +464,23 @@ function updateSettingsPanel() {
     });
 }
 
+/**
+ * Ensure a string is human readable by rendering all non-printable characters
+ * with a hex escaping.
+ */
+function makeHumanReadable(str) {
+  var parts = [];
+  for (var j = 0; j < str.length; j++) {
+    var d = str.charCodeAt(j);
+    if (d < 32) {
+      parts.push("\\x" + d.toString(16));
+    } else {
+      parts.push(str.charAt(j));
+    }
+  }
+  return parts.join("");
+}
+
 var incomingCommandLookbackChar = ' ';
 
 /**
@@ -505,7 +522,7 @@ function logCommand(cmd, isSend) {
   // Add each line to the console output.
   lines = cmd.split("\n");
   for (var i = 0; i < lines.length; i++) {
-    nodeToWriteTo.text(nodeToWriteTo.text() + lines[i]);
+    nodeToWriteTo.text(nodeToWriteTo.text() + makeHumanReadable(lines[i]));
 
     // Tag nodes which are just an ack.
     if (!isSend) {
@@ -616,8 +633,8 @@ function emergencyStop() {
   // Send the command to perform an emergency stop.
   sendCommandToSerialConnection("M112", true);
 
-  // Reset the serial connection (some machines respond to this instead of M112).
-  resetSerialConnection();
+  // Send an ascii cancel command.
+  sendCommandToSerialConnection("\x18", true);
 
   // Update the UI.
   $("#lbl-enqueued-command-count").text(window.workspaceCommandQueue.length);
@@ -720,18 +737,6 @@ function connectToSerialPort() {
     // Don't fall asleep while controlling a machine.
     chrome.power.requestKeepAwake("system");
   });
-}
-
-/**
- * Reset the serial connection by disconnecting and reconnecting.
- */
-function resetSerialConnection() {
-  if (window.workspaceConnectionId) {
-      console.log("resetting serial connection");
-      chrome.serial.disconnect(window.workspaceConnectionId, function(result) {
-        connectToSerialPort();
-      });
-  }
 }
 
 function configureNavBar() {
