@@ -10,14 +10,17 @@ void loop() {
     char c = Serial.read();
     if (c == '\n') {
       delay(500);
-      Serial.write("ok\n");
+      Serial.write("ok\n\n");
+      Serial.flush();
+      Serial.write("ok\n\n");
     } else if (c == '$') {
        Serial.write("helpful output\n");
        Serial.write("--------------\n");
        Serial.write("$  - this output\n");
        Serial.write("\\n - prints 'ok'\n");
     }
-    
+    Serial.flush();
+
     // TODO: validate gcode commands?
   }
 }
