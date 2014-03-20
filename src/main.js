@@ -573,7 +573,7 @@ function sendCommandToSerialConnection(cmd) {
 
   // Actually send the command.
   chrome.serial.send(window.workspaceConnectionId,
-		     str2ab(cmd + "\r\n"), function(info) {
+      str2ab(cmd + "\n"), function(info) {
     if (info.error) {
       showWarning("cmd", "failed to send command: " + info.error);
     }    
