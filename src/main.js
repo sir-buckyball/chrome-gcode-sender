@@ -837,6 +837,11 @@ function configureControlPanel() {
   $("#btn-stepsize-down").click(function(e) {
     $("#input-stepsize").val(parseInt($("#input-stepsize").val()) - 1).change();
   });
+
+  // configure the console actions.
+  $("#lnk-clear-log").click(function(e) {
+    $("#console-log").html("");
+  });
 }
 
 function configureFilePanel() {
