@@ -842,6 +842,10 @@ function configureControlPanel() {
   $("#lnk-clear-log").click(function(e) {
     $("#console-log").html("");
   });
+  $("#lnk-clear-command-queue").click(function(e) {
+    window.workspaceCommandQueue = [];
+    $("#lbl-enqueued-command-count").text(0);
+  });
 }
 
 function configureFilePanel() {
