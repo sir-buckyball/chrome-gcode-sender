@@ -29,7 +29,7 @@ window.manualInputHistory = [];
 window.manualInputPosition = 0;
 
 // TODO: make this configurable.
-var CONSOLE_MAX_SCROLLBACK = 200;
+var CONSOLE_MAX_SCROLLBACK = 1000;
 
 /**
  * Display a warning to the user. Messages are grouped so
