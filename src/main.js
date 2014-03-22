@@ -174,6 +174,43 @@ function extractCommandSequence(text) {
   return commandSequence;
 }
 
+/**
+ * Tease apart a gcode command into its component parts.
+ *
+ * @param {string} cmd - a gcode command string
+ * @return {string[]} A list of command parts
+ */
+var breakupGcodeCommand = function(cmd) {
+  var parts = [];
+  var curPart = [];
+  var inPart = false;
+
+  for (var i = 0; i < cmd.length; i++) {
+    var c = cmd[i];
+    if (c == " " || c == "\t") {
+      continue;
+    }
+    if (inPart) {
+      if ((c >= "0" && c <= "9") || c == "." || c == "-") {
+        curPart.push(c)
+      } else {
+        parts.push(curPart.join(""));
+        inPart = false;
+      }
+    }
+    if (!inPart) {
+      curPart = [c];
+      inPart = true;
+    }
+  }
+
+  if (curPart.length > 0) {
+    parts.push(curPart.join(""));
+  }
+
+  return parts;
+}
+
 /* Render the list of gcode commands onto a canvas. */
 function renderGcode(commandSequence) {
   // Clear out any previous paths.
@@ -234,7 +271,7 @@ function renderGcode(commandSequence) {
   var path = null;
   for (var i = 0; i < commandSequence.length; i++) {
     var command = commandSequence[i];
-    var parts = command.split(" ");
+    var parts = breakupGcodeCommand(command);
 
     var cType = parts[0][0];
     var cNum = parseInt(parts[0].substr(1), 10);
