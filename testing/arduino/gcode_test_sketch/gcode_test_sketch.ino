@@ -8,16 +8,18 @@ void setup() {
 void loop() {
   if (Serial.available()) {
     char c = Serial.read();
-    if (c == '\n') {
+    if (c == '\r') {
+      Serial.write("ok\r\n");
+      Serial.flush();
+    } else if (c == '\n') {
       delay(500);
       Serial.write("ok\r\n");
       Serial.flush();
-      Serial.write("ok\r\n");
     } else if (c == '$') {
-       Serial.write("helpful output\n");
-       Serial.write("--------------\n");
-       Serial.write("$  - this output\n");
-       Serial.write("\\n - prints 'ok'\n");
+      Serial.write("helpful output\n");
+      Serial.write("--------------\n");
+      Serial.write("$  - this output\n");
+      Serial.write("\\n - prints 'ok'\n");
     }
     Serial.flush();
 
