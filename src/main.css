@@ -63,3 +63,9 @@ html {
   margin-top: -3ex;
   padding-left: 1ex;
 }
+
+#render-canvas-holder {
+  /* TODO: make this self-adjusting */
+  height: 560px;
+  overflow-y: scroll;
+}

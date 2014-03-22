@@ -8,6 +8,7 @@
   <script type="text/javascript" src="lib/bootstrap/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="lib/moment.min.js"></script>
   <script type="text/javascript" src="lib/paper-core.min.js"></script>
+  <script src="gcode_util.js"></script>
   <script src="main.js"></script>
 </head>
 <body id="body">
@@ -237,7 +238,10 @@
           </div>
           <div class="panel-body" id="render-canvas-holder">
             <div id="warnings-render" class="alert alert-warning" hidden></div>
-            <canvas id="render-canvas" class="" resize></canvas>
+            <canvas id="render-canvas" class="" height="530" width="900"></canvas>
+          </div>
+          <div class="panel-footer">
+            <div id="info-render"></div>
           </div>
         </div>
       </div>

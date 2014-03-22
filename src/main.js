@@ -174,45 +174,25 @@ function extractCommandSequence(text) {
   return commandSequence;
 }
 
-/**
- * Tease apart a gcode command into its component parts.
- *
- * @param {string} cmd - a gcode command string
- * @return {string[]} A list of command parts
- */
-var breakupGcodeCommand = function(cmd) {
-  var parts = [];
-  var curPart = [];
-  var inPart = false;
-
-  for (var i = 0; i < cmd.length; i++) {
-    var c = cmd[i];
-    if (c == " " || c == "\t") {
-      continue;
-    }
-    if (inPart) {
-      if ((c >= "0" && c <= "9") || c == "." || c == "-") {
-        curPart.push(c)
-      } else {
-        parts.push(curPart.join(""));
-        inPart = false;
-      }
-    }
-    if (!inPart) {
-      curPart = [c];
-      inPart = true;
-    }
-  }
-
-  if (curPart.length > 0) {
-    parts.push(curPart.join(""));
-  }
-
-  return parts;
-}
-
 /* Render the list of gcode commands onto a canvas. */
 function renderGcode(commandSequence) {
+  // Run an analysis on the gcode to determine the appropriate bounds for rendering.
+  var analysis = analyzeGcode(commandSequence);
+
+  // Display the estimated execution time.
+  var timeMs = analysis["estimatedExecutionTimeMin"] * 60 * 1000;
+  var duration = moment.duration(timeMs);
+  var timeStr = [];
+  if (duration.hours() > 0) {
+    timeStr.push(duration.hours() + (duration.hours() > 1 ? " hours" : " hour"));
+  }
+  if (duration.minutes() > 0) {
+    timeStr.push(duration.minutes() + (duration.minutes() > 1 ? " minutes" : " minute"));
+  }
+  timeStr.push(duration.seconds() + (duration.seconds() > 1 ? " seconds" : " second"));
+  console.log("estimated execution time: " + timeStr.join(", "));
+  $("#info-render").text("estimated execution time: " + timeStr.join(", "));
+
   // Clear out any previous paths.
   paper.project.activeLayer.removeChildren();
 
@@ -220,14 +200,15 @@ function renderGcode(commandSequence) {
 
   // Initialize our state variables.
   var warnings = {};
+  var viewWidth = $("#render-canvas").width();
+  var viewHeight = $("#render-canvas").height();
+  var renderWidth = Math.max(1, analysis.maxPos.X) -
+      Math.min(0, analysis.minPos.X);
+  var renderHeight = Math.max(1, analysis.maxPos.Y) -
+      Math.min(0, analysis.minPos.Y);
 
-  // try to render in real size (default to mm)
-  var viewWidth = $("#render-canvas-holder").width();
-  var viewHeight = chrome.app.window.current().getBounds().height -
-      $("#render-canvas-holder").position().top - 18;
-  var scale = Math.min(
-      viewWidth / settings["workspace-width-mm"],
-      viewHeight / settings["workspace-depth-mm"]);
+  // A scaling factor from mm to our screen pixels.
+  var scale = Math.min(viewWidth / renderWidth, viewHeight / renderHeight);
 
   // A toggle for absolute v. relative coordinate specification.
   var isRelative = false;
@@ -247,23 +228,41 @@ function renderGcode(commandSequence) {
     "Z": 0
   };
 
-  // draw a little table representing out workspace.
-  new paper.Path.Rectangle({
-    "point": [0, 0],
-    "size": [workspace["X"], workspace["Y"]],
-    "strokeColor": "#B8E6E6"
+  // Center the rendering.
+  var centerX = (renderWidth / 2 + Math.min(0, analysis.minPos.X)) * scale;
+  var centerY = (workspace.Y - (renderHeight / 2 + Math.min(0, analysis.minPos.Y)) * scale)
+  paper.project.view.scrollBy(new paper.Point(
+    centerX - paper.project.view.center.x, centerY - paper.project.view.center.y));
+
+  // Private helper function for inverting the Y rendering axis.
+  var invertY = function(y) {
+    return workspace["Y"] - y;
+  }
+
+  // Draw a little graph table representing out workspace.
+  new paper.Path.Line({
+    "from": [0, invertY(0)],
+    "to": [0, invertY(workspace.Y * scale)],
+    "strokeColor": "#A3CCCC",
+    "strokeWidth": 2
   });
-  for (var i = 0; i < workspace["X"]; i += 5 * scale) {
+  new paper.Path.Line({
+    "from": [0, invertY(0)],
+    "to": [workspace.X  * scale, invertY(0)],
+    "strokeColor": "#A3CCCC",
+    "strokeWidth": 2
+  });
+  for (var i = 0; i < workspace.X; i += 10) {
     new paper.Path.Line({
-      "from": [i, 0],
-      "to": [i, workspace["Y"]],
+      "from": [i * scale, invertY(0)],
+      "to": [i * scale, invertY(renderHeight * scale)],
       "strokeColor": "#CCFFFF"
     });
   }
-  for (var i = 0; i < workspace["Y"]; i += 5 * scale) {
+  for (var i = 0; i < workspace.Y; i += 10) {
     new paper.Path.Line({
-      "from": [0, i],
-      "to": [workspace["X"], i],
+      "from": [0, invertY(i * scale)],
+      "to": [renderWidth * scale, invertY(i * scale)],
       "strokeColor": "#CCFFFF"
     });
   }
@@ -303,10 +302,10 @@ function renderGcode(commandSequence) {
         if (cNum == 0) {
           path.dashArray = [1, 2];
         }
-        path.moveTo(new paper.Point(start.x, workspace["Y"] - start.y));
+        path.moveTo(new paper.Point(start.x, invertY(start.y)));
       }
   
-      path.lineTo(new paper.Point(end.x, workspace["Y"] - end.y));
+      path.lineTo(new paper.Point(end.x, invertY(end.y)));
 
       // Update our known position.
       pos["X"] = end.x;
@@ -343,11 +342,11 @@ function renderGcode(commandSequence) {
       if (!path) {
         var path = new paper.Path();
         path.strokeColor = 'black';
-        path.moveTo(new paper.Point(start.x, workspace["Y"] - start.y));
+        path.moveTo(new paper.Point(start.x, invertY(start.y)));
       }
       path.arcTo(
-        new paper.Point(through.x, workspace["Y"] - through.y),
-        new paper.Point(end.x, workspace["Y"] - end.y));
+        new paper.Point(through.x, invertY(through.y)),
+        new paper.Point(end.x, invertY(end.y)));
 
       // Update our known position.
       pos["X"] = end.x;
