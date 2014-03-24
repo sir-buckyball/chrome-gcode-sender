@@ -882,6 +882,9 @@ function configureControlPanel() {
     window.workspaceCommandQueue = [];
     $("#lbl-enqueued-command-count").text(0);
   });
+  $("#lnk-clear-ack-block").click(function(e) {
+    window.workspacePendingAck = false;
+  });
 }
 
 function configureFilePanel() {
