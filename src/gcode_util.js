@@ -47,6 +47,7 @@ function breakupGcodeCommand(cmd) {
  * @param {string[]} gcode - A list of gcode commands
  */
 function analyzeGcode(gcode) {
+  console.time("analyzeGcode");
   var warnings = {};
 
   // A toggle for absolute v. relative coordinate specification.
@@ -196,4 +197,5 @@ function analyzeGcode(gcode) {
     "minPos": minPos,
     "estimatedExecutionTimeMin": estimatedExecutionTimeMin
   };
+  console.timeEnd("analyzeGcode");
 }

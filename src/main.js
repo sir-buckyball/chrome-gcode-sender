@@ -96,21 +96,13 @@ function processFile(f) {
   // TODO: don't read binary files.
 
   console.log("processing file: " + f.name);
+  console.time("readFile");
   var reader = new FileReader();
   reader.onloadend = function(evt) {
     if (evt.target.readyState == FileReader.DONE) {
-      console.log("done reading file");
-
-      var start;
-      console.log("begin parsing gcode");
-      start = moment();
+      console.timeEnd("readFile");
       window.commandSequence = extractCommandSequence(evt.target.result);
-      console.log("end parsing gcode (" + moment.duration(moment() - start).toIsoString() + ")");
-
-      console.log("begin rendering");
-      start = moment();
       renderGcode(commandSequence);
-      console.log("end rendering (" + moment.duration(moment() - start).toIsoString() + ")");
     }
   };
   reader.readAsText(f);
@@ -118,6 +110,8 @@ function processFile(f) {
 
 /* Break a string of gcode text into a sequence of commands. */
 function extractCommandSequence(text) {
+  console.time("extractCommandSequence");
+
   // Break the raw text into a command sequence.
   var commandSequence = [];
   var currentCommand = [];
@@ -171,11 +165,13 @@ function extractCommandSequence(text) {
   }
   currentCommand = [];
 
+  console.timeEnd("extractCommandSequence");
   return commandSequence;
 }
 
 /* Render the list of gcode commands onto a canvas. */
 function renderGcode(commandSequence) {
+  console.time("renderGcode");
   // Run an analysis on the gcode to determine the appropriate bounds for rendering.
   var analysis = analyzeGcode(commandSequence);
 
@@ -194,11 +190,12 @@ function renderGcode(commandSequence) {
   $("#info-render").text("estimated execution time: " + timeStr.join(", "));
 
   // Clear out any previous paths.
+  console.time("renderGcode: clearing");
   paper.project.activeLayer.removeChildren();
-
-  var settings = window.settings;
+  console.timeEnd("renderGcode: clearing");
 
   // Initialize our state variables.
+  var settings = window.settings;
   var warnings = {};
   var viewWidth = $("#render-canvas").width();
   var viewHeight = $("#render-canvas").height();
@@ -240,6 +237,7 @@ function renderGcode(commandSequence) {
   }
 
   // Draw a little graph table representing out workspace.
+  console.time("renderGcode: axis/graph");
   new paper.Path.Line({
     "from": [0, invertY(0)],
     "to": [0, invertY(workspace.Y * scale)],
@@ -266,7 +264,9 @@ function renderGcode(commandSequence) {
       "strokeColor": "#CCFFFF"
     });
   }
+  console.timeEnd("renderGcode: axis/graph");
 
+  console.time("renderGcode: gcode");
   var path = null;
   for (var i = 0; i < commandSequence.length; i++) {
     var command = commandSequence[i];
@@ -436,8 +436,11 @@ function renderGcode(commandSequence) {
       warnings[msg] = (warnings[msg] || 0) + 1;
     }
   }
+  console.timeEnd("renderGcode: gcode");
 
+  console.time("renderGcode: paper.view.draw");
   paper.view.draw();
+  console.timeEnd("renderGcode: paper.view.draw");
 
   // Log all warnings.
   $("#warnings-render").html("");
@@ -449,6 +452,8 @@ function renderGcode(commandSequence) {
   if (Object.keys(warnings).length > 0) {
     $("#warnings-render").show();
   }
+
+  console.timeEnd("renderGcode");
 }
 
 function loadSettingsFromStorage() {
