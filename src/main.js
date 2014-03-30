@@ -351,6 +351,8 @@ function renderGcode(commandSequence) {
       // Update our known position.
       pos["X"] = end.x;
       pos["Y"] = end.y;
+    } else if (cType == "G" && cNum == 4) {
+      // dwell
     } else if (cType == "G" && cNum == 17) {
       // XY plane selection
       // TODO: support other axis specification

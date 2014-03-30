@@ -122,6 +122,10 @@ function analyzeGcode(gcode) {
           Math.pow(pos["Z"] - prevPos["Z"], 2));
       estimatedExecutionTimeMin += dist / feedrate;
 
+    } else if (cType == "G" && cNum == 4) {
+      // dwell
+      estimatedExecutionTimeMin += (params["U"] == undefined) ? 0 : params["U"] / 60.0;
+      estimatedExecutionTimeMin += (params["P"] == undefined) ? 0 : params["P"] / 60000.0;
     } else if (cType == "G" && cNum == 17) {
       // XY plane selection
     } else if (cType == "G" && cNum == 20) {
