@@ -13,7 +13,9 @@ window.settings = {
   "workspace-depth-mm": 150,
   "workspace-height-mm": 50,
   "workspace-port": "",
-  "workspace-baud": 115200
+  "workspace-baud": 115200,
+  "workspace-show-estop": true,
+  "workspace-show-spindle": true
 };
 
 // A flag used for determining if we are waiting for an ok from the workspace.
@@ -471,9 +473,17 @@ function loadSettingsFromStorage() {
     s["workspace-port"] = s["workspace-port"] || window.settings["workspace-port"];
     s["workspace-baud"] = s["workspace-baud"] || window.settings["workspace-baud"];
 
+    if (s["workspace-show-estop"] === undefined) {
+      s["workspace-show-estop"] = window.settings["workspace-show-estop"];
+    }
+    if (s["workspace-show-spindle"] === undefined) {
+      s["workspace-show-spindle"] = window.settings["workspace-show-spindle"];
+    }
+
     window.settings = s;
 
     configureSettingsPanel();
+    updateControlPanel();
   });
 }
 
@@ -491,6 +501,8 @@ function updateSettingsPanel() {
     $("#input-workspace-depth").val(s["workspace-depth-mm"]);
     $("#input-workspace-height").val(s["workspace-height-mm"]);
     $("#input-workspace-baud").val(s["workspace-baud"]);
+    $("#input-control-show-estop").prop("checked", s["workspace-show-estop"]);
+    $("#input-control-show-spindle").prop("checked", s["workspace-show-spindle"]);
 
     // lookup the available serial devices.
     chrome.serial.getDevices(function(device) {
@@ -892,6 +904,35 @@ function configureControlPanel() {
   $("#lnk-clear-ack-block").click(function(e) {
     window.workspacePendingAck = false;
   });
+
+  // configure the spindle controls.
+  $("#btn-m3").click(function(e) {
+    enqueueCommandsToSend(["M3"]);
+  });
+  $("#btn-m4").click(function(e) {
+    enqueueCommandsToSend(["M4"]);
+  });
+  $("#btn-m5").click(function(e) {
+    enqueueCommandsToSend(["M5"]);
+  });
+}
+
+/**
+ * Update the control panel. This is expected to be called after any
+ * settings changes.
+ */
+function updateControlPanel() {
+  if (window.settings["workspace-show-spindle"]) {
+    $("#panel-spindle").show();
+  } else {
+    $("#panel-spindle").hide();
+  }
+
+  if (window.settings["workspace-show-estop"]) {
+    $("#panel-estop").show();
+  } else {
+    $("#panel-estop").hide();
+  }
 }
 
 function configureFilePanel() {
@@ -953,8 +994,12 @@ function configureSettingsPanel() {
     settings["workspace-height-mm"] = $("#input-workspace-height").val();
     settings["workspace-port"] = $("#input-workspace-port").val();
     settings["workspace-baud"] = parseInt($("#input-workspace-baud").val());
+    settings["workspace-show-estop"] = $("#input-control-show-estop").prop("checked");
+    settings["workspace-show-spindle"] = $("#input-control-show-spindle").prop("checked");
+
     window.settings = settings;
     saveSettingsToStorage(settings);
+    updateControlPanel();
 
     // give some visual feedback to the user.
     $("#btn-update-settings").text("done.").prop("disabled", 1);
@@ -1028,13 +1073,21 @@ function configureKeyboard() {
       } else if (e.keyCode == 90) { // 'z'; step Z axis down
         $("#btn-z-down").click();
 
-      // Stepsize incrementing.
+      // Stepsize incrementing
       } else if (e.keyCode == 187) { // '='; increment step size
         $("#btn-stepsize-up").click();
       } else if (e.keyCode == 189) { // '-'; decrement step size
         $("#btn-stepsize-down").click();
 
-      // Other.
+      // Spindle options
+      } else if (e.keyCode == 51) { // '3'; spindle clockwise
+        $("#btn-m3").click();
+      } else if (e.keyCode == 52) { // '4'; spindle clockwise
+        $("#btn-m4").click();
+      } else if (e.keyCode == 53) { // '5'; spindle clockwise
+        $("#btn-m5").click();
+
+      // Other
       } else if (e.keyCode == 191) { // '/'; focus the manual command input.
         // the delay is to allow the current event propagation to finish.
         setTimeout(function() {
