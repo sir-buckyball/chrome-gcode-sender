@@ -32,6 +32,9 @@ The control panel has the following:
 'a' - jog Z axis +N
 '+' - increment jump size by 10x
 '-' - decrement jump size by 10x
+'3' - spindle clockwise
+'4' - spindle counter-clockwise
+'5' - spindle off
 '/' - focus command input
 'esc' - blur command input
 </pre>
