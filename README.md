@@ -50,7 +50,7 @@ What libraries did you use?
 
 Are there any known issues?
 ---------------------------
-Yes.
+Yes. This project uses the github [issue tracker](https://github.com/sir-buckyball/chrome-gcode-sender/issues?state=open).
 * UI doesn't always let the user know of an issue (check the chrome developer console)
 * Sometimes chrome.serial doesn't obey the settings you ask for
   * try using 9600 baud
