@@ -171,6 +171,28 @@ function extractCommandSequence(text) {
   return commandSequence;
 }
 
+/* Resize the paperjs view to fit everything rendered. */
+function resizeView() {
+  var minX = -0.01;
+  var minY = -0.01;
+  var maxX = 0.01;
+  var maxY = 0.01;
+  var allItems = paper.project.getItems();
+  for (var k = 0; k < allItems.length; k++) {
+    var bounds = allItems[k].getBounds();
+    minX = Math.min(minX, bounds.x);
+    minY = Math.min(minY, bounds.y);
+    maxX = Math.max(maxX, bounds.x + bounds.width);
+    maxY = Math.max(maxY, bounds.y + bounds.height);
+  }
+  paper.view.setCenter(new paper.Point(
+    minX + (maxX - minX) / 2, minY + (maxY - minY) / 2));
+
+  var scaleX = (paper.view.viewSize.width / ((maxX - minX) * 1.1));
+  var scaleY = (paper.view.viewSize.height / ((maxY - minY) * 1.1));
+  paper.view.setZoom(Math.min(scaleX, scaleY));
+}
+
 /* Render the list of gcode commands onto a canvas. */
 function renderGcode(commandSequence) {
   console.time("renderGcode");
@@ -192,22 +214,14 @@ function renderGcode(commandSequence) {
   $("#info-render").text("estimated execution time: " + timeStr.join(", "));
 
   // Clear out any previous paths.
-  console.time("renderGcode: clearing");
-  paper.project.activeLayer.removeChildren();
-  console.timeEnd("renderGcode: clearing");
+  paper.project.clear();
 
   // Initialize our state variables.
   var settings = window.settings;
   var warnings = {};
-  var viewWidth = $("#render-canvas").width();
-  var viewHeight = $("#render-canvas").height();
-  var renderWidth = Math.max(1, analysis.maxPos.X) -
-      Math.min(0, analysis.minPos.X);
-  var renderHeight = Math.max(1, analysis.maxPos.Y) -
-      Math.min(0, analysis.minPos.Y);
 
-  // A scaling factor from mm to our screen pixels.
-  var scale = Math.min(viewWidth / renderWidth, viewHeight / renderHeight);
+  // A scaling factor from current units to mm.
+  var scale = 1;
 
   // A toggle for absolute v. relative coordinate specification.
   var isRelative = false;
@@ -215,60 +229,47 @@ function renderGcode(commandSequence) {
   // A toggle for inch v. millimeter coordinate specification.
   var isInches = false;
 
-  var workspace = {
-    "X": settings["workspace-width-mm"] * scale,
-    "Y": settings["workspace-depth-mm"] * scale,
-    "Z": settings["workspace-height-mm"] * scale
-  };
-
+  // The current tool position.
   var pos = {
     "X": 0,
     "Y": 0,
     "Z": 0
   };
 
-  // Center the rendering.
-  var centerX = (renderWidth / 2 + Math.min(0, analysis.minPos.X)) * scale;
-  var centerY = (workspace.Y - (renderHeight / 2 + Math.min(0, analysis.minPos.Y)) * scale)
-  paper.project.view.scrollBy(new paper.Point(
-    centerX - paper.project.view.center.x, centerY - paper.project.view.center.y));
-
-  // Private helper function for inverting the Y rendering axis.
-  var invertY = function(y) {
-    return workspace["Y"] - y;
-  }
+  // A paper group for all of the paths to be rendered.
+  var allPaths = new paper.Group();
 
   // Draw a little graph table representing out workspace.
-  console.time("renderGcode: axis/graph");
-  new paper.Path.Line({
-    "from": [0, invertY(0)],
-    "to": [0, invertY(workspace.Y * scale)],
+  var workspaceWidth = parseFloat(settings["workspace-width-mm"]) || 100;
+  var workspaceDepth = parseFloat(settings["workspace-depth-mm"]) || 100;
+  allPaths.addChild(new paper.Path.Line({
+    "from": [0, 0],
+    "to": [0, workspaceWidth],
     "strokeColor": "#A3CCCC",
     "strokeWidth": 2
-  });
-  new paper.Path.Line({
-    "from": [0, invertY(0)],
-    "to": [workspace.X  * scale, invertY(0)],
+  }));
+  allPaths.addChild(new paper.Path.Line({
+    "from": [0, 0],
+    "to": [workspaceDepth, 0],
     "strokeColor": "#A3CCCC",
     "strokeWidth": 2
-  });
-  for (var i = 0; i < workspace.X; i += 10) {
-    new paper.Path.Line({
-      "from": [i * scale, invertY(0)],
-      "to": [i * scale, invertY(renderHeight * scale)],
+  }));
+  for (var i = 10; i < workspaceWidth; i += 10) {
+    allPaths.addChild(new paper.Path.Line({
+      "from": [i, 0],
+      "to": [i, workspaceDepth],
       "strokeColor": "#CCFFFF"
-    });
+    }));
   }
-  for (var i = 0; i < workspace.Y; i += 10) {
-    new paper.Path.Line({
-      "from": [0, invertY(i * scale)],
-      "to": [renderWidth * scale, invertY(i * scale)],
+  for (var i = 10; i < workspaceDepth; i += 10) {
+    allPaths.addChild(new paper.Path.Line({
+      "from": [0, i],
+      "to": [workspaceWidth, i],
       "strokeColor": "#CCFFFF"
-    });
+    }));
   }
-  console.timeEnd("renderGcode: axis/graph");
 
-  console.time("renderGcode: gcode");
+  console.time("renderGcode: gcode processing");
   var path = null;
   for (var i = 0; i < commandSequence.length; i++) {
     var command = commandSequence[i];
@@ -300,14 +301,15 @@ function renderGcode(commandSequence) {
       // create a new path if one is not already available.
       if (!path) {
         var path = new paper.Path();
+        allPaths.addChild(path);
         path.strokeColor = 'black';
         if (cNum == 0) {
           path.dashArray = [1, 2];
         }
-        path.moveTo(new paper.Point(start.x, invertY(start.y)));
+        path.moveTo(new paper.Point(start.x, start.y));
       }
   
-      path.lineTo(new paper.Point(end.x, invertY(end.y)));
+      path.lineTo(new paper.Point(end.x, end.y));
 
       // Update our known position.
       pos["X"] = end.x;
@@ -343,12 +345,13 @@ function renderGcode(commandSequence) {
 
       if (!path) {
         var path = new paper.Path();
+        allPaths.addChild(path);
         path.strokeColor = 'black';
-        path.moveTo(new paper.Point(start.x, invertY(start.y)));
+        path.moveTo(new paper.Point(start.x, start.y));
       }
       path.arcTo(
-        new paper.Point(through.x, invertY(through.y)),
-        new paper.Point(end.x, invertY(end.y)));
+        new paper.Point(through.x, through.y),
+        new paper.Point(end.x, end.y));
 
       // Update our known position.
       pos["X"] = end.x;
@@ -360,15 +363,11 @@ function renderGcode(commandSequence) {
       // TODO: support other axis specification
     } else if (cType == "G" && cNum == 20) {
       // programming in inches
-      if (!isInches) {
-        scale *= 25.4;
-      }
+      scale = 25.4;
       isInches = true;
     } else if (cType == "G" && cNum == 21) {
       // programming in mm
-      if (isInches) {
-        scale /= 25.4;
-      }
+      scale = 1;
       isInches = false;
     } else if (cType == "G" && cNum == 28) {
       // return to home
@@ -438,11 +437,17 @@ function renderGcode(commandSequence) {
       warnings[msg] = (warnings[msg] || 0) + 1;
     }
   }
-  console.timeEnd("renderGcode: gcode");
+  console.timeEnd("renderGcode: gcode processing");
 
-  console.time("renderGcode: paper.view.draw");
+  // Invert everything (to move the origin to the bottom left).
+  allPaths.scale(1, -1);
+
+  // The view must be resized before setting the stroke width
+  // so we know how wide to stroke.
+  resizeView();
+  allPaths.style.strokeWidth = 1 / paper.view.getZoom();
+
   paper.view.draw();
-  console.timeEnd("renderGcode: paper.view.draw");
 
   // Log all warnings.
   $("#warnings-render").html("");
@@ -939,11 +944,8 @@ function configureFilePanel() {
   // Initialize paper.js
   paper.setup($("#render-canvas")[0]);
 
-  // update the load-file panel whenever it is shown.
-  $('a[href="#view-load-file"]').on('shown.bs.tab', function (e) {
-    console.log("updating file preview area.");
-    renderGcode(window.commandSequence);
-  });
+  // Render an empty workspace.
+  renderGcode(window.commandSequence);
 
   $("#btn-send-file-to-machine").click(function(e) {
     console.log("enqueing file command sequence.")
@@ -968,17 +970,6 @@ function configureFilePanel() {
     $('#main-tabs a[href="#view-load-file"]').tab('show');
   }, false);
   dropZone.addEventListener('drop', handleFileSelect, false);
-
-  // re-render whenever the panel is resized
-  // TODO: can the canvas just be redrawn with the same lines?
-  $(window).resize(function() {
-    clearTimeout($.data(this, 'resizeTimer'));
-    $.data(this, 'resizeTimer', setTimeout(function() {
-      if ($("#render-canvas").is(":visible")) {
-        renderGcode(window.commandSequence);      
-      }
-    }, 500));
-  });
 }
 
 function configureSettingsPanel() {
