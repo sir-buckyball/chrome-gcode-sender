@@ -200,7 +200,7 @@ function renderGcode(commandSequence) {
   var analysis = analyzeGcode(commandSequence);
 
   // Display the estimated execution time.
-  var timeMs = analysis["estimatedExecutionTimeMin"] * 60 * 1000;
+  var timeMs = analysis.estimatedExecutionTimeMin * 60 * 1000;
   var duration = moment.duration(timeMs);
   var timeStr = [];
   if (duration.hours() > 0) {
@@ -288,39 +288,39 @@ function renderGcode(commandSequence) {
       path = null;
     }
 
-    if (cType == "G" && (cNum == 0 || cNum == 1)) {
-      var endX = ((isRelative || params["X"] == undefined) ? pos["X"] : 0) +
-          ((params["X"] == undefined) ? 0 : params["X"] * scale);
-      var endY = ((isRelative || params["Y"] == undefined) ? pos["Y"] : 0) +
-          ((params["Y"] == undefined) ? 0 : params["Y"] * scale);
+    if (cType == "G" && (cNum === 0 || cNum === 1)) {
+      var endX = ((isRelative || params.X === undefined) ? pos.X : 0) +
+          ((params.X === undefined) ? 0 : params.X * scale);
+      var endY = ((isRelative || params.Y === undefined) ? pos.Y : 0) +
+          ((params.Y === undefined) ? 0 : params.Y * scale);
 
       // rapid move | linear interpolation
-      var start = new paper.Point(pos["X"], pos["Y"]);
+      var start = new paper.Point(pos.X, pos.Y);
       var end = new paper.Point(endX, endY);
 
       // create a new path if one is not already available.
       if (!path) {
-        var path = new paper.Path();
+        path = new paper.Path();
         allPaths.addChild(path);
         path.strokeColor = 'black';
-        if (cNum == 0) {
+        if (cNum === 0) {
           path.dashArray = [1, 2];
         }
         path.moveTo(new paper.Point(start.x, start.y));
       }
-  
+
       path.lineTo(new paper.Point(end.x, end.y));
 
       // Update our known position.
-      pos["X"] = end.x;
-      pos["Y"] = end.y;
+      pos.X = end.x;
+      pos.Y = end.y;
 
       // Don't join rapid move segments since they have a different style than other lines.
-      if (cNum == 0) {
+      if (cNum === 0) {
         path = null;
       }
-    } else if (cType == "G" && (cNum == 2 || cNum == 3)) {
-      if (params["I"] == undefined || params["J"] == undefined) {
+    } else if (cType == "G" && (cNum === 2 || cNum === 3)) {
+      if (params.I === undefined || params.J === undefined) {
         msg = "implementation only supports specification of both I and J: " + command;
         warnings[msg] = (warnings[msg] || 0) + 1;
         continue;
@@ -329,22 +329,22 @@ function renderGcode(commandSequence) {
       // circular interpolation (clockwise)
       var clockwise = (cNum == 2);
 
-      var endX = ((isRelative || params["X"] == undefined) ? pos["X"] : 0) +
-          ((params["X"] == undefined) ? 0 : params["X"] * scale);
-      var endY = ((isRelative || params["Y"] == undefined) ? pos["Y"] : 0) +
-          ((params["Y"] == undefined) ? 0 : params["Y"] * scale);
+      var endX = ((isRelative || params.X === undefined) ? pos.X : 0) +
+          ((params.X === undefined) ? 0 : params.X * scale);
+      var endY = ((isRelative || params.Y === undefined) ? pos.Y : 0) +
+          ((params.Y === undefined) ? 0 : params.Y * scale);
 
       // TODO: implement missing axii (Z, A, B, C, K)
-      var start = new paper.Point(pos["X"], pos["Y"]);
+      var start = new paper.Point(pos.X, pos.Y);
       var end = new paper.Point(endX, endY);
 
-      var center = start.add(new paper.Point(params["I"] * scale, params["J"] * scale));
+      var center = start.add(new paper.Point(params.I * scale, params.J * scale));
       var through = start.subtract(center);
       through.angle = start.add(end).subtract(center).subtract(center).angle;
       through = through.add(center);
 
       if (!path) {
-        var path = new paper.Path();
+        path = new paper.Path();
         allPaths.addChild(path);
         path.strokeColor = 'black';
         path.moveTo(new paper.Point(start.x, start.y));
@@ -354,51 +354,51 @@ function renderGcode(commandSequence) {
         new paper.Point(end.x, end.y));
 
       // Update our known position.
-      pos["X"] = end.x;
-      pos["Y"] = end.y;
-    } else if (cType == "G" && cNum == 4) {
+      pos.X = end.x;
+      pos.Y = end.y;
+    } else if (cType == "G" && cNum === 4) {
       // dwell
-    } else if (cType == "G" && cNum == 17) {
+    } else if (cType == "G" && cNum === 17) {
       // XY plane selection
       // TODO: support other axis specification
-    } else if (cType == "G" && cNum == 20) {
+    } else if (cType == "G" && cNum === 20) {
       // programming in inches
       scale = 25.4;
       isInches = true;
-    } else if (cType == "G" && cNum == 21) {
+    } else if (cType == "G" && cNum === 21) {
       // programming in mm
       scale = 1;
       isInches = false;
-    } else if (cType == "G" && cNum == 28) {
+    } else if (cType == "G" && cNum === 28) {
       // return to home
-      if (params["X"] !== undefined) {
-        pos["X"] = 0;
+      if (params.X !== undefined) {
+        pos.X = 0;
       }
-      if (params["Y"] !== undefined) {
-        pos["Y"] = 0;
+      if (params.Y !== undefined) {
+        pos.Y = 0;
       }
-      if (params["Z"] !== undefined) {
-        pos["Z"] = 0;
+      if (params.Z !== undefined) {
+        pos.Z = 0;
       }
-    } else if (cType == "G" && cNum == 40) {
+    } else if (cType == "G" && cNum === 40) {
       // tool radius compensation off.
       // TODO: implement tool radius compensation.
-    } else if (cType == "G" && cNum == 90) {
+    } else if (cType == "G" && cNum === 90) {
       // absolute coordinates.
       isRelative = false;
-    } else if (cType == "G" && cNum == 91) {
+    } else if (cType == "G" && cNum === 91) {
       // relative coordinates.
       isRelative = true;
-    } else if (cType == "G" && cNum == 92) {
+    } else if (cType == "G" && cNum === 92) {
       // coordinate system offset. This command effectively states that the machine
       // is at the specified coordinates.
 
       // Fake support for this by validating that the command does not mess
       // with an axis we care about.
       // TODO: implement real support for this.
-      if (params["X"] != undefined ||
-          params["Y"] != undefined ||
-          params["Z"] != undefined) {
+      if (params.X !== undefined ||
+          params.Y !== undefined ||
+          params.Z !== undefined) {
         msg = "coordinate system offset (G92) not implemented.";
         warnings[msg] = (warnings[msg] || 0) + 1;
       }
@@ -452,7 +452,7 @@ function renderGcode(commandSequence) {
   // Log all warnings.
   $("#warnings-render").html("");
   $("#warnings-render").hide();
-  for (w in warnings) {
+  for (var w in warnings) {
     console.log(w);
     $("<div>", {"text": w}).appendTo("#warnings-render");
   }
@@ -466,9 +466,9 @@ function renderGcode(commandSequence) {
 function loadSettingsFromStorage() {
   // Load any persisted settings into a global variable.
   chrome.storage.local.get("settings", function(o) {
-    var s = {}
-    if (o && o["settings"]) {
-      s = o["settings"];
+    var s = {};
+    if (o && o.settings) {
+      s = o.settings;
     }
 
     // Fill in any missing settings.
@@ -636,7 +636,7 @@ function sendCommandToSerialConnection(cmd) {
       str2ab(cmd + "\n"), function(info) {
     if (info.error) {
       showWarning("cmd", "failed to send command: " + info.error);
-    }    
+    }
   });
 
   logCommand(cmd, true);
@@ -660,7 +660,7 @@ function enqueueCommandsToSend(commands) {
  */
 function processCommandQueue() {
   // Only process the queue if we are connected.
-  if (window.workspaceCommandQueue.length == 0 || !window.workspaceConnectionId) {
+  if (window.workspaceCommandQueue.length === 0 || !window.workspaceConnectionId) {
     return;
   }
 
@@ -675,7 +675,7 @@ function processCommandQueue() {
   $("#lbl-enqueued-command-count").text(window.workspaceCommandQueue.length);
 
   // re-enable manual input.
-  if (window.workspaceCommandQueue.length == 0 && window.workspaceConnectionId) {
+  if (window.workspaceCommandQueue.length === 0 && window.workspaceConnectionId) {
     $(".connection-enabled").prop("disabled", 0);
   }
 }
@@ -683,7 +683,7 @@ function processCommandQueue() {
 /**
  * Perform an emergency machine stop. This will send a M112 command, clear the
  * command queue, and disconnect from the machine.
- * 
+ *
  * Per documentation, the machine will likely need to be manually reset on
  * the controller board before it can be used again.
  */
@@ -720,7 +720,7 @@ var str2ab=function(str) {
     bufView[i]=str.charCodeAt(i);
   }
   return buf;
-}
+};
 
 function getStepSize() {
   return Math.pow(10, parseInt($("#input-stepsize").val()));
@@ -773,7 +773,7 @@ function connectToSerialPort() {
   console.log("connecting to '" + window.settings["workspace-port"] +
        "' with options: " + JSON.stringify(options));
   chrome.serial.connect(window.settings["workspace-port"], options, function(info) {
-    if (info == null) {
+    if (!info) {
       showWarning("connection", "Unable to connect to " + window.settings["workspace-port"]);
       $("#btn-connect").prop("disabled", 0);
       $("#btn-connect").show();
@@ -782,7 +782,7 @@ function connectToSerialPort() {
 
     console.log("serial connection obtained:\n" + JSON.stringify(info));
 
-    for (k in options) {
+    for (var k in options) {
       if (options[k] != info[k]) {
         showWarning("connection", "Chrome did not use requested serial connection option. [" +
             k + "; expected:" + options[k] + ", actual:" + info[k] + "]");
@@ -948,7 +948,7 @@ function configureFilePanel() {
   renderGcode(window.commandSequence);
 
   $("#btn-send-file-to-machine").click(function(e) {
-    console.log("enqueing file command sequence.")
+    console.log("enqueing file command sequence.");
     enqueueCommandsToSend(window.commandSequence);
 
     // Disable the button so we don't send it again.
