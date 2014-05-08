@@ -19,7 +19,7 @@ function breakupGcodeCommand(cmd) {
     }
     if (inPart) {
       if ((c >= "0" && c <= "9") || c == "." || c == "-") {
-        curPart.push(c)
+        curPart.push(c);
       } else {
         parts.push(curPart.join(""));
         inPart = false;
@@ -71,7 +71,7 @@ function analyzeGcode(gcode) {
   var estimatedExecutionTimeMin = 0;
 
   for (var i = 0; i < commandSequence.length; i++) {
-    var prevPos = {"X": pos["X"], "Y": pos["Y"], "Z": pos["Z"]};
+    var prevPos = {"X": pos.X, "Y": pos.Y, "Z": pos.Z};
     var command = commandSequence[i];
     var parts = breakupGcodeCommand(command);
 
@@ -84,49 +84,49 @@ function analyzeGcode(gcode) {
       params[parts[j][0].toUpperCase()] = parseFloat(parts[j].substr(1)) || 0;
     }
 
-    if (cType == "G" && (cNum == 0 || cNum == 1)) {
-      pos["X"] = ((isRelative || params["X"] == undefined) ? pos["X"] : 0) +
-          ((params["X"] == undefined) ? 0 : params["X"] * scale);
-      pos["Y"] = ((isRelative || params["Y"] == undefined) ? pos["Y"] : 0) +
-          ((params["Y"] == undefined) ? 0 : params["Y"] * scale);
-      pos["Z"] = ((isRelative || params["Z"] == undefined) ? pos["Z"] : 0) +
-          ((params["Z"] == undefined) ? 0 : params["Z"] * scale);
-      if (params["F"] !== undefined) {
-        feedrate = params["F"] * scale;
+    if (cType == "G" && (cNum === 0 || cNum === 1)) {
+      pos.X = ((isRelative || params.X === undefined) ? pos.X : 0) +
+          ((params.X === undefined) ? 0 : params.X * scale);
+      pos.Y = ((isRelative || params.Y === undefined) ? pos.Y : 0) +
+          ((params.Y === undefined) ? 0 : params.Y * scale);
+      pos.Z = ((isRelative || params.Z === undefined) ? pos.Z : 0) +
+          ((params.Z === undefined) ? 0 : params.Z * scale);
+      if (params.F !== undefined) {
+        feedrate = params.F * scale;
       }
 
       var dist = Math.sqrt(
-          Math.pow(pos["X"] - prevPos["X"], 2) +
-          Math.pow(pos["Y"] - prevPos["Y"], 2) +
-          Math.pow(pos["Z"] - prevPos["Z"], 2));
+          Math.pow(pos.X - prevPos.X, 2) +
+          Math.pow(pos.Y - prevPos.Y, 2) +
+          Math.pow(pos.Z - prevPos.Z, 2));
       estimatedExecutionTimeMin += dist / feedrate;
 
     } else if (cType == "G" && (cNum == 2 || cNum == 3)) {
       // TODO: Deal with arcs not being aligned to the axis
       //   (and thus exceeding the bounding region of their start/end points)
-      pos["X"] = ((isRelative || params["X"] == undefined) ? pos["X"] : 0) +
-          ((params["X"] == undefined) ? 0 : params["X"] * scale);
-      pos["Y"] = ((isRelative || params["Y"] == undefined) ? pos["Y"] : 0) +
-          ((params["Y"] == undefined) ? 0 : params["Y"] * scale);
-      pos["Z"] = ((isRelative || params["Z"] == undefined) ? pos["Z"] : 0) +
-          ((params["Z"] == undefined) ? 0 : params["Z"] * scale);
-      if (params["F"] !== undefined) {
-        feedrate = params["F"] * scale;
+      pos.X = ((isRelative || params.X === undefined) ? pos.X : 0) +
+          ((params.X === undefined) ? 0 : params.X * scale);
+      pos.Y = ((isRelative || params.Y === undefined) ? pos.Y : 0) +
+          ((params.Y === undefined) ? 0 : params.Y * scale);
+      pos.Z = ((isRelative || params.Z === undefined) ? pos.Z : 0) +
+          ((params.Z === undefined) ? 0 : params.Z * scale);
+      if (params.F !== undefined) {
+        feedrate = params.F * scale;
       }
 
       // TODO: Actually calculate the length of the arc. We'll assume this is
       // the longest recommend arc length. Assuming no more than a 120 degree
       // span, the length is 2*pi*sqrt(3)/9 ~= 1.209 times the direct distance.
-      var dist = 1.209 * Math.sqrt(
-          Math.pow(pos["X"] - prevPos["X"], 2) +
-          Math.pow(pos["Y"] - prevPos["Y"], 2) +
-          Math.pow(pos["Z"] - prevPos["Z"], 2));
-      estimatedExecutionTimeMin += dist / feedrate;
+      var dArc = 1.209 * Math.sqrt(
+          Math.pow(pos.X - prevPos.X, 2) +
+          Math.pow(pos.Y - prevPos.Y, 2) +
+          Math.pow(pos.Z - prevPos.Z, 2));
+      estimatedExecutionTimeMin += dArc / feedrate;
 
     } else if (cType == "G" && cNum == 4) {
       // dwell
-      estimatedExecutionTimeMin += (params["U"] == undefined) ? 0 : params["U"] / 60.0;
-      estimatedExecutionTimeMin += (params["P"] == undefined) ? 0 : params["P"] / 60000.0;
+      estimatedExecutionTimeMin += (params.U === undefined) ? 0 : params.U / 60.0;
+      estimatedExecutionTimeMin += (params.P === undefined) ? 0 : params.P / 60000.0;
     } else if (cType == "G" && cNum == 17) {
       // XY plane selection
     } else if (cType == "G" && cNum == 20) {
@@ -143,14 +143,14 @@ function analyzeGcode(gcode) {
       isInches = false;
     } else if (cType == "G" && cNum == 28) {
       // return to home
-      if (params["X"] !== undefined) {
-        pos["X"] = 0;
+      if (params.X !== undefined) {
+        pos.X = 0;
       }
-      if (params["Y"] !== undefined) {
-        pos["Y"] = 0;
+      if (params.Y !== undefined) {
+        pos.Y = 0;
       }
-      if (params["Z"] !== undefined) {
-        pos["Z"] = 0;
+      if (params.Z !== undefined) {
+        pos.Z = 0;
       }
     } else if (cType == "G" && cNum == 40) {
       // tool radius compensation off.
@@ -167,9 +167,9 @@ function analyzeGcode(gcode) {
       // Fake support for this by validating that the command does not mess
       // with an axis we care about.
       // TODO: implement real support for this.
-      if (params["X"] != undefined ||
-          params["Y"] != undefined ||
-          params["Z"] != undefined) {
+      if (params.X !== undefined ||
+          params.Y !== undefined ||
+          params.Z !== undefined) {
         msg = "coordinate system offset (G92) not implemented.";
         warnings[msg] = (warnings[msg] || 0) + 1;
       }
@@ -183,19 +183,19 @@ function analyzeGcode(gcode) {
 
     // Update our bounding regions.
     // TODO: Arcs can cause us to exceed these regions!
-    if (minPos["X"] > pos["X"]) {minPos["X"] = pos["X"];}
-    if (minPos["Y"] > pos["Y"]) {minPos["Y"] = pos["Y"];}
-    if (minPos["Z"] > pos["Z"]) {minPos["Z"] = pos["Z"];}
-    if (maxPos["X"] < pos["X"]) {maxPos["X"] = pos["X"];} 
-    if (maxPos["Y"] < pos["Y"]) {maxPos["Y"] = pos["Y"];}
-    if (maxPos["Z"] < pos["Z"]) {maxPos["Z"] = pos["Z"];}
+    if (minPos.X > pos.X) {minPos.X = pos.X;}
+    if (minPos.Y > pos.Y) {minPos.Y = pos.Y;}
+    if (minPos.Z > pos.Z) {minPos.Z = pos.Z;}
+    if (maxPos.X < pos.X) {maxPos.X = pos.X;}
+    if (maxPos.Y < pos.Y) {maxPos.Y = pos.Y;}
+    if (maxPos.Z < pos.Z) {maxPos.Z = pos.Z;}
   }
 
+  console.timeEnd("analyzeGcode");
   return {
     "warnings": warnings,
     "maxPos": maxPos,
     "minPos": minPos,
     "estimatedExecutionTimeMin": estimatedExecutionTimeMin
   };
-  console.timeEnd("analyzeGcode");
 }
