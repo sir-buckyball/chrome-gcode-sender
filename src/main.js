@@ -799,6 +799,9 @@ function connectToSerialPort() {
 
     // Don't fall asleep while controlling a machine.
     chrome.power.requestKeepAwake("system");
+
+    // Clear any ack blocks.
+    window.workspacePendingAck = false;
   });
 }
 
