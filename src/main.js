@@ -691,7 +691,7 @@ function emergencyStop() {
   console.error("!!!emergency stop activated!!!");
 
   // Clear the command queue.
-  window.workspaceCommandQueue = [];
+  clearCommandQueue();
 
   // Send the command to perform an emergency stop.
   sendCommandToSerialConnection("M112", true);
@@ -813,6 +813,9 @@ function configureNavBar() {
   $("#btn-disconnect").click(function(e) {
     // If we're disconnected, we don't need to keep the system awake.
     chrome.power.releaseKeepAwake();
+
+    // It's misleading to think the command queue will be applied on reconnect.
+    clearCommandQueue();
 
     // fast user feedback that something happened.
     if (window.workspaceConnectionId) {
