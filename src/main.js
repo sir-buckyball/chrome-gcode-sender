@@ -254,17 +254,17 @@ function renderGcode(commandSequence) {
     "strokeColor": "#A3CCCC",
     "strokeWidth": 2
   }));
-  for (var i = 10; i < workspaceWidth; i += 10) {
+  for (var ix = 10; i < workspaceWidth; ix += 10) {
     allPaths.addChild(new paper.Path.Line({
-      "from": [i, 0],
-      "to": [i, workspaceDepth],
+      "from": [ix, 0],
+      "to": [ix, workspaceDepth],
       "strokeColor": "#CCFFFF"
     }));
   }
-  for (var i = 10; i < workspaceDepth; i += 10) {
+  for (var iy = 10; i < workspaceDepth; iy += 10) {
     allPaths.addChild(new paper.Path.Line({
-      "from": [0, i],
-      "to": [workspaceWidth, i],
+      "from": [0, iy],
+      "to": [workspaceWidth, iy],
       "strokeColor": "#CCFFFF"
     }));
   }
@@ -329,33 +329,33 @@ function renderGcode(commandSequence) {
       // circular interpolation (clockwise)
       var clockwise = (cNum == 2);
 
-      var endX = ((isRelative || params.X === undefined) ? pos.X : 0) +
+      var arcEndX = ((isRelative || params.X === undefined) ? pos.X : 0) +
           ((params.X === undefined) ? 0 : params.X * scale);
-      var endY = ((isRelative || params.Y === undefined) ? pos.Y : 0) +
+      var arcEndY = ((isRelative || params.Y === undefined) ? pos.Y : 0) +
           ((params.Y === undefined) ? 0 : params.Y * scale);
 
       // TODO: implement missing axii (Z, A, B, C, K)
-      var start = new paper.Point(pos.X, pos.Y);
-      var end = new paper.Point(endX, endY);
+      var arcStart = new paper.Point(pos.X, pos.Y);
+      var arcEnd = new paper.Point(arcEndX, arcEndY);
 
-      var center = start.add(new paper.Point(params.I * scale, params.J * scale));
-      var through = start.subtract(center);
-      through.angle = start.add(end).subtract(center).subtract(center).angle;
+      var center = arcStart.add(new paper.Point(params.I * scale, params.J * scale));
+      var through = arcStart.subtract(center);
+      through.angle = arcStart.add(arcEnd).subtract(center).subtract(center).angle;
       through = through.add(center);
 
       if (!path) {
         path = new paper.Path();
         allPaths.addChild(path);
         path.strokeColor = 'black';
-        path.moveTo(new paper.Point(start.x, start.y));
+        path.moveTo(new paper.Point(arcStart.x, arcStart.y));
       }
       path.arcTo(
         new paper.Point(through.x, through.y),
-        new paper.Point(end.x, end.y));
+        new paper.Point(arcEnd.x, arcEnd.y));
 
       // Update our known position.
-      pos.X = end.x;
-      pos.Y = end.y;
+      pos.X = arcEnd.x;
+      pos.Y = arcEnd.y;
     } else if (cType == "G" && cNum === 4) {
       // dwell
     } else if (cType == "G" && cNum === 17) {
@@ -1021,19 +1021,19 @@ function configureKeyboard() {
 
     } else if (e.keyCode == 38) { // up arrow; show previous history position.
       window.manualInputPosition = Math.max(window.manualInputPosition - 1, 0);
-      var c = ((window.manualInputPosition < window.manualInputHistory.length) ?
+      var prevCommand = ((window.manualInputPosition < window.manualInputHistory.length) ?
           window.manualInputHistory[window.manualInputPosition] : "");
-      $("#input-control-cmd").val(c);
+      $("#input-control-cmd").val(prevCommand);
       setTimeout(function() {
-        $("#input-control-cmd")[0].setSelectionRange(c.length, c.length);
+        $("#input-control-cmd")[0].setSelectionRange(prevCommand.length, prevCommand.length);
       }, 0);
     } else if (e.keyCode == 40) { // down arrow; show next history position.
       window.manualInputPosition = Math.min(window.manualInputPosition + 1, window.manualInputHistory.length);
-      var c = ((window.manualInputPosition < window.manualInputHistory.length) ?
+      var nextCommand = ((window.manualInputPosition < window.manualInputHistory.length) ?
           window.manualInputHistory[window.manualInputPosition] : "");
-      $("#input-control-cmd").val(c);
+      $("#input-control-cmd").val(nextCommand);
       setTimeout(function() {
-        $("#input-control-cmd")[0].setSelectionRange(c.length, c.length);
+        $("#input-control-cmd")[0].setSelectionRange(nextCommand.length, nextCommand.length);
       }, 0);
     }
   });
