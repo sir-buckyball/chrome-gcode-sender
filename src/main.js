@@ -800,8 +800,8 @@ function connectToSerialPort() {
     // Don't fall asleep while controlling a machine.
     chrome.power.requestKeepAwake("system");
 
-    // Clear any ack blocks.
-    window.workspacePendingAck = false;
+    // Clear the command queue.
+    clearCommandQueue();
   });
 }
 
@@ -905,10 +905,7 @@ function configureControlPanel() {
   $("#lnk-clear-log").click(function(e) {
     $("#console-log").html("");
   });
-  $("#lnk-clear-command-queue").click(function(e) {
-    window.workspaceCommandQueue = [];
-    $("#lbl-enqueued-command-count").text(0);
-  });
+  $("#lnk-clear-command-queue").click(clearCommandQueue);
   $("#lnk-clear-ack-block").click(function(e) {
     window.workspacePendingAck = false;
   });
@@ -923,6 +920,15 @@ function configureControlPanel() {
   $("#btn-m5").click(function(e) {
     enqueueCommandsToSend(["M5"]);
   });
+}
+
+/**
+ * Clear the command queue.
+ */
+function clearCommandQueue() {
+  window.workspaceCommandQueue = [];
+  window.workspacePendingAck = false;
+  $("#lbl-enqueued-command-count").text(0);
 }
 
 /**
