@@ -16,7 +16,8 @@ window.settings = {
   "workspace-baud": 115200,
   "workspace-show-estop": true,
   "workspace-show-spindle": true,
-  "workspace-jog-feedrate": 0
+  "workspace-jog-feedrate": 0,
+  "workspace-jog-rapid": false
 };
 
 // A flag used for determining if we are waiting for an ok from the workspace.
@@ -487,6 +488,9 @@ function loadSettingsFromStorage() {
     }
 
     s["workspace-jog-feedrate"] = s["workspace-jog-feedrate"] || window.settings["workspace-jog-feedrate"];
+    if (s["workspace-jog-rapid"] === undefined) {
+      s["workspace-jog-rapid"] = window.settings["workspace-jog-rapid"];
+    }
 
     window.settings = s;
 
@@ -512,6 +516,7 @@ function updateSettingsPanel() {
     $("#input-control-show-estop").prop("checked", s["workspace-show-estop"]);
     $("#input-control-show-spindle").prop("checked", s["workspace-show-spindle"]);
     $("#input-jog-feedrate").val(s["workspace-jog-feedrate"]);
+    $("#input-jog-rapid").prop("checked", s["workspace-jog-rapid"]);
 
     // lookup the available serial devices.
     chrome.serial.getDevices(function(device) {
@@ -744,11 +749,16 @@ function enqueueRelativeMove(axis) {
   if (!window.workspaceIsMm) {
     commands.push("G21");
   }
+
   var feedrate = window.settings["workspace-jog-feedrate"];
-  var mv = "G1 " + axis + getStepSize();
-  if (feedrate != NaN && feedrate > 0) {
+  var mv = "G1";
+  if (window.settings["workspace-jog-rapid"]) {
+    mv = "G0"
+  } else if (feedrate != NaN && feedrate > 0) {
     mv += " F" + feedrate;
   }
+  mv += " " + axis + getStepSize();
+
   commands.push(mv);
   enqueueCommandsToSend(commands);
 }
@@ -1009,6 +1019,7 @@ function configureSettingsPanel() {
     settings["workspace-show-estop"] = $("#input-control-show-estop").prop("checked");
     settings["workspace-show-spindle"] = $("#input-control-show-spindle").prop("checked");
     settings["workspace-jog-feedrate"] = parseInt($("#input-jog-feedrate").val());
+    settings["workspace-jog-rapid"] = $("#input-jog-rapid").prop("checked");
 
     window.settings = settings;
     saveSettingsToStorage(settings);
