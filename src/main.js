@@ -414,6 +414,10 @@ function renderGcode(commandSequence) {
       case 3: // spindle on clockwise
       case 4: // spindle on counterclockwise
       case 5: // spindle stop
+      case 6: // tool change for linuxcnc
+      case 7: // coolant on, mist
+      case 8: // coolant on, flood
+      case 9: // coolant off
       case 30: // end of program with return to top
       case 40: // reprap eject
       case 82: // reprap extruder absolute mode
