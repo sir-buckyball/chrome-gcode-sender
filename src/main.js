@@ -15,7 +15,8 @@ window.settings = {
   "workspace-port": "",
   "workspace-baud": 115200,
   "workspace-show-estop": true,
-  "workspace-show-spindle": true
+  "workspace-show-spindle": true,
+  "workspace-jog-feedrate": 0
 };
 
 // A flag used for determining if we are waiting for an ok from the workspace.
@@ -485,6 +486,8 @@ function loadSettingsFromStorage() {
       s["workspace-show-spindle"] = window.settings["workspace-show-spindle"];
     }
 
+    s["workspace-jog-feedrate"] = s["workspace-jog-feedrate"] || window.settings["workspace-jog-feedrate"];
+
     window.settings = s;
 
     configureSettingsPanel();
@@ -508,6 +511,7 @@ function updateSettingsPanel() {
     $("#input-workspace-baud").val(s["workspace-baud"]);
     $("#input-control-show-estop").prop("checked", s["workspace-show-estop"]);
     $("#input-control-show-spindle").prop("checked", s["workspace-show-spindle"]);
+    $("#input-jog-feedrate").val(s["workspace-jog-feedrate"]);
 
     // lookup the available serial devices.
     chrome.serial.getDevices(function(device) {
@@ -740,7 +744,12 @@ function enqueueRelativeMove(axis) {
   if (!window.workspaceIsMm) {
     commands.push("G21");
   }
-  commands.push("G1 " + axis + getStepSize());
+  var feedrate = window.settings["workspace-jog-feedrate"];
+  var mv = "G1 " + axis + getStepSize();
+  if (feedrate != NaN && feedrate > 0) {
+    mv += " F" + feedrate;
+  }
+  commands.push(mv);
   enqueueCommandsToSend(commands);
 }
 
@@ -999,6 +1008,7 @@ function configureSettingsPanel() {
     settings["workspace-baud"] = parseInt($("#input-workspace-baud").val());
     settings["workspace-show-estop"] = $("#input-control-show-estop").prop("checked");
     settings["workspace-show-spindle"] = $("#input-control-show-spindle").prop("checked");
+    settings["workspace-jog-feedrate"] = parseInt($("#input-jog-feedrate").val());
 
     window.settings = settings;
     saveSettingsToStorage(settings);

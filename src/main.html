@@ -307,12 +307,6 @@
                   </div>
                   <span class="help-block col-md-offset-2">The communication speed (typically 57600 or 115200).</span>
                 </div>
-
-                <div class="form-group">
-                  <div class="col-md-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-primary" id="btn-update-settings">update</button>
-                  </div>
-                </div>
               </form>
             </div>
           </div>
@@ -342,6 +336,28 @@
               </form>
             </div>
           </div>        
+        </div>
+
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              jog settings
+            </div>
+            <div class="panel-body">
+              <form class="form" role="form" action="#">
+                 <div class="form-group">
+                  <label for="input-jog-feedrate" class="control-label">feedrate</label>
+                  <input id="input-jog-feedrate" class="form-control" type="number" min="0">
+                  <p class="help-block">Feedrate used when jogging (mm/min). 0 omits feedrate.</p>
+                </div>
+              </form>
+            </div>
+          </div>        
+        </div>
+
+        <div class="col-md-12">
+          <button type="submit" class="btn btn-primary col-md-10 col-md-offset-1"
+              id="btn-update-settings">update</button>
         </div>
       </div>
     </div>
