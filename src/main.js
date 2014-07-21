@@ -1,7 +1,6 @@
 // author: Buck Clay (dev@buckclay.com)
 // date: 2013-12-25
 
-// TODO: highlight selected panel
 // TODO: something is causing it to be terribly slow...
 // TODO: come back to load file, previous file is gone... (state loss)
 // sending seemed to stop working...
@@ -56,6 +55,7 @@ app.controller('mainCtrl', function($scope, $state,
   settingsService.load();
   $state.go("controlpanel");
 
+  $scope.$state = $state;
   $scope.warningService = warningService;
   $scope.machineService = machineService;
 

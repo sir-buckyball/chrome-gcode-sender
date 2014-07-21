@@ -38,10 +38,10 @@
 
     <div class="collapse navbar-collapse" id="navbar-collapse">
       <ul class="nav navbar-nav" id="main-tabs">
-        <li><a ui-sref="controlpanel">control panel</a></li>
-        <li><a ui-sref="loadfile">load file</a></li>
-        <li><a ui-sref="settings">settings</a></li>
-        <li><a ui-sref="about">about</a></li>
+        <li ng-class="{active:$state.is('controlpanel')}"><a ui-sref="controlpanel">control panel</a></li>
+        <li ng-class="{active:$state.is('loadfile')}"><a ui-sref="loadfile">load file</a></li>
+        <li ng-class="{active:$state.is('settings')}"><a ui-sref="settings">settings</a></li>
+        <li ng-class="{active:$state.is('about')}"><a ui-sref="about">about</a></li>
       </ul>
 
       <div class="navbar-form navbar-right">
