@@ -1,17 +1,30 @@
-<html>
+<html ng-app="gcodeSender" ng-csp>
 <head>
+  <meta charset="utf-8" />
 	<title>gcode-viewer</title>
   <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="lib/bootstrap/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="lib/angular-csp.css">
+  <link rel="stylesheet" href="lib/hotkeys.css">
   <link rel="stylesheet" href="main.css">
   <script type="text/javascript" src="lib/jquery-2.0.3.min.js"></script>
   <script type="text/javascript" src="lib/bootstrap/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="lib/mousetrap.min.js"></script>
+  <script type="text/javascript" src="lib/angular.min.js"></script>
+  <script type="text/javascript" src="lib/angular-ui-router.min.js"></script>
   <script type="text/javascript" src="lib/moment.min.js"></script>
   <script type="text/javascript" src="lib/paper-core.min.js"></script>
+  <script type="text/javascript" src="lib/scrollglue.js"></script>
+  <script type="text/javascript" src="lib/hotkeys.js"></script>
   <script src="gcode_util.js"></script>
   <script src="main.js"></script>
+  <script src="machineservice.js"></script>
+  <script src="warningservice.js"></script>
+  <script src="controlpanel.js"></script>
+  <script src="loadfile.js"></script>
+  <script src="settings.js"></script>
 </head>
-<body id="body">
+<body id="body" ng-controller="mainCtrl">
   <nav class="navbar navbar-default" role="navigation">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
@@ -25,374 +38,32 @@
 
     <div class="collapse navbar-collapse" id="navbar-collapse">
       <ul class="nav navbar-nav" id="main-tabs">
-        <li class="active"><a href="#view-control-panel" data-toggle="tab">control panel</a></li>
-        <li><a href="#view-load-file" data-toggle="tab">load file</a></li>
-        <li><a href="#view-settings" data-toggle="tab">settings</a></li>
-        <li><a href="#view-about" data-toggle="tab">about</a></li>
+        <li><a ui-sref="controlpanel">control panel</a></li>
+        <li><a ui-sref="loadfile">load file</a></li>
+        <li><a ui-sref="settings">settings</a></li>
+        <li><a ui-sref="about">about</a></li>
       </ul>
 
       <div class="navbar-form navbar-right">
-        <button type="submit" class="btn btn-success" id="btn-connect">connect</button>
-        <button type="submit" class="btn btn-danger" id="btn-disconnect">disconnect</button>
+        <button class="btn btn-success"
+            ng-show="!machineService.isConnected"
+            ng-disabled="machineService.isBusy"
+            ng-click="connect()">connect</button>
+        <button class="btn btn-danger"
+            ng-show="machineService.isConnected"
+            ng-disabled="machineService.isBusy"
+            ng-click="disconnect()">disconnect</button>
       </div>
     </div>
   </nav>
 
-  <div id="warnings-user" class="container"></div>
-
-  <div class="tab-content" id="main-views">
-    <div class="tab-pane active" id="view-control-panel" hidden>
-      <div class="container">
-        <span class="col-md-4">
-          <div class="panel panel-default" id="panel-estop">
-            <div class="panel-heading">emergency stop</div>
-            <div class="panel-body">
-              <div class="distributed-box centered">
-                <label for="emergency-stop" class="sr-only">emergency-stop</label>
-                <button id="btn-emergency-stop" name="emergency-stop" class="btn btn-danger btn-estop">
-                  <span class="glyphicon glyphicon-warning-sign"></span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              jog controls
-            </div>
-            <div class="panel-body" id="jog-panel">
-              <form class="form-inline" role="form" id="form-command-jog">
-                <div class="distributed-box">
-                  <div>
-                    <table>
-                      <tr>
-                        <td>
-                          <button class="btn btn-default connection-enabled" id="btn-z-up">
-                            <span class="glyphicon glyphicon-arrow-up"></span>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <label>Z</label>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <button class="btn btn-default connection-enabled" id="btn-z-down">
-                            <span class="glyphicon glyphicon-arrow-down"></span>
-                          </button>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-                  <div>
-                    <table>
-                      <tr>
-                        <td></td>
-                        <td>
-                          <button class="btn btn-default connection-enabled" id="btn-y-up">
-                            <span class="glyphicon glyphicon-chevron-up"></span>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <button class="btn btn-default connection-enabled" id="btn-x-down">
-                            <span class="glyphicon glyphicon-chevron-left"></span>
-                          </button>
-                        </td>
-                        <td>
-                          <label>X/Y</label>
-                        </td>
-                        <td>
-                          <button class="btn btn-default connection-enabled" id="btn-x-up">
-                            <span class="glyphicon glyphicon-chevron-right"></span>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td>
-                          <button class="btn btn-default connection-enabled" id="btn-y-down">
-                            <span class="glyphicon glyphicon-chevron-down"></span>
-                          </button>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-                  <div>
-                    <table>
-                      <tr>
-                        <td>
-                          <button class="btn btn-default connection-enabled" id="btn-x-home">
-                            <span class="glyphicon glyphicon-home"></span> X
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <button class="btn btn-default connection-enabled" id="btn-y-home">
-                            <span class="glyphicon glyphicon-home"></span> Y
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <button class="btn btn-default connection-enabled" id="btn-z-home">
-                            <span class="glyphicon glyphicon-home"></span> Z
-                          </button>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label for="stepsize">
-                    step size <small>(<span id="output-stepsize"></span>)</small>
-                  </label>
-                  <div class="input-group">
-                    <span class="input-group-btn">
-                      <button class="btn btn-default" id="btn-stepsize-down" type="button">-</button>
-                    </span>
-                    <input type="range" name="stepsize" id="input-stepsize" min="-1" max="2" class="form-control">
-                    <span class="input-group-btn">
-                      <button class="btn btn-default" id="btn-stepsize-up" type="button">+</button>
-                    </span>
-                  </div>                
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <div class="panel panel-default" id="panel-spindle">
-            <div class="panel-heading">spindle controls</div>
-            <div class="panel-body">
-              <div class="distributed-box centered">
-                <button class="btn btn-default connection-enabled" id="btn-m3">CW</button>
-                <button class="btn btn-default connection-enabled" id="btn-m4">CCW</button>
-                <button class="btn btn-default connection-enabled" id="btn-m5">OFF</button>
-              </div>
-            </div>
-          </div>
-        </span>
-
-
-        <span class="col-md-8">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <div class="dropdown pull-right">
-                <button class="btn dropdown-toggle" type="button" id="console-menu" data-toggle="dropdown">
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="console-menu">
-                  <li role="presentation"><a role="menuitem" tabindex="-1" href="#" id="lnk-clear-log">clear log</a></li>
-                  <li role="presentation"><a role="menuitem" tabindex="-1" href="#" id="lnk-clear-command-queue">clear command queue</a></li>
-                  <li role="presentation"><a role="menuitem" tabindex="-1" href="#" id="lnk-clear-ack-block">stop waiting for 'ok'</a></li>
-                </ul>
-              </div>
-              console
-              <small id="lbl-enqueued-commands">(
-                <span id="lbl-enqueued-command-count">0</span>
-                enqueued commands)
-              </small>
-            </div>
-            <div class="panel-body">
-              <div class="form-group">
-                <div id="console-log"></div>
-                <form class="form"  role="form" action="#" id="form-command-console">
-                  <div class="input-group">
-                    <input type="text" class="form-control" id="input-control-cmd">
-                    <div class="input-group-btn">
-                      <button type="submit" class="btn btn-default connection-enabled" id="btn-control-send-cmd">send</button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </span>
-      </div>
-    </div>
-
-    <div class="tab-pane" id="view-load-file" hidden>
-      <!-- this input is needed to let a user select a file, but it is ugly so we hide it. -->
-      <input type="file" id="input-file-local" style="display:none">
-
-      <div class="container">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <table width="100%">
-              <tr>
-                <td>
-                  <span id="render-canvas-heading"><em>empty workspace</em></span>
-                </td>
-                <td align="right">
-                  <span class="btn-toolbar-inline">
-                    <div class="btn-group btn-group-sm">
-                      <button class="btn btn-primary" id="btn-open-local-file">
-                        <span class="glyphicon glyphicon-open"></span>
-                        open local file
-                      </button>
-                    </div>
-
-                    <div class="btn-group btn-group-sm">
-                      <button class="btn btn-success connection-enabled" id="btn-send-file-to-machine">
-                        <span class="glyphicon glyphicon-transfer"></span>
-                        send to machine
-                      </button>
-                    </div>
-                  </span>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div class="panel-body" id="render-canvas-holder">
-            <div id="warnings-render" class="alert alert-warning" hidden></div>
-            <canvas id="render-canvas" height="480px" width="720px"></canvas>
-          </div>
-          <div class="panel-footer">
-            <div id="info-render"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="tab-pane" id="view-settings" hidden>
-      <div class="container">
-
-        <div class="col-md-8">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              workspace dimensions
-            </div>
-            <div class="panel-body">
-              <form class="form-horizontal" role="form" action="#">
-                <div class="form-group">
-                  <label for="input-workspace-width" class="col-md-2 control-label">width</label>
-                  <div class="col-md-10">
-                    <input id="input-workspace-width" class="form-control" type="number">
-                  </div>
-                  <span class="help-block col-md-offset-2">The width (X) of the machine workspace in millimeters.</span>
-                </div>
-                <div class="form-group">
-                  <label for="input-workspace-depth" class="col-md-2 control-label">depth</label>
-                  <div class="col-md-10">
-                    <input id="input-workspace-depth" class="form-control" type="number">
-                  </div>
-                  <span class="help-block col-md-offset-2">The depth (Y) of the machine workspace in millimeters.</span>
-                </div>
-                <div class="form-group">
-                  <label for="input-workspace-height" class="col-md-2 control-label">height(Z)</label>
-                  <div class="col-md-10">
-                    <input id="input-workspace-height" class="form-control" type="number">
-                  </div>
-                  <span class="help-block col-md-offset-2">The height (Z) of the machine workspace in millimeters.</span>
-                </div>
-
-                <hr>
-
-                <div class="form-group">
-                  <label for="input-workspace-port" class="col-md-2 control-label">port</label>
-                  <div class="col-md-10">
-                    <select id="input-workspace-port" class="form-control"></select>
-                  </div>
-                  <span class="help-block col-md-offset-2">The serial port to use for communications.</span>
-                </div>
-                <div class="form-group">
-                  <label for="input-workspace-port" class="col-md-2 control-label">baud rate</label>
-                  <div class="col-md-10">
-                    <input id="input-workspace-baud" class="form-control" type="number">
-                  </div>
-                  <span class="help-block col-md-offset-2">The communication speed (typically 57600 or 115200).</span>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              control panel settings
-            </div>
-            <div class="panel-body">
-              <form class="form-horizontal" role="form" action="#">
-
-                <div class="checkbox">
-                  <label for="input-control-show-estop">
-                    <input id="input-control-show-estop" type="checkbox" checked>
-                    show e-stop button
-                  </label>
-                </div>
-
-                <div class="checkbox">
-                  <label for="input-control-show-spindle">
-                    <input id="input-control-show-spindle" type="checkbox" checked>
-                    show spindle controls
-                  </label>
-                </div>
-              </form>
-            </div>
-          </div>        
-        </div>
-
-        <div class="col-md-4">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              jog settings
-            </div>
-            <div class="panel-body">
-              <form class="form" role="form" action="#">
-                 <div class="form-group">
-                  <label for="input-jog-feedrate" class="control-label">feedrate</label>
-                  <input id="input-jog-feedrate" class="form-control" type="number" min="0">
-                  <p class="help-block">Feedrate used when jogging (mm/min). 0 omits feedrate.</p>
-                </div>
-
-                <div class="checkbox">
-                  <label for="input-job-rapid">
-                    <input id="input-jog-rapid" type="checkbox">
-                    use rapid movement (G0)
-                    <p class="help-block">faster, but non-linear movements.</p>
-                  </label>
-                </div>
-              </form>
-            </div>
-          </div>        
-        </div>
-
-        <div class="col-md-12">
-          <button type="submit" class="btn btn-primary col-md-10 col-md-offset-1"
-              id="btn-update-settings">update</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="tab-pane" id="view-about" hidden>
-      <div class="container">
-        <h2>What is this madness?</h2>
-        <p><strong>gcode-sender</strong> is a chrome application capable of sending <a href="http://en.wikipedia.org/wiki/Gcode" target="_blank">gcode</a> commands to a USB gcode intrepreter (hobby CNC machines / 3D printers).</p>
-
-        <h2>Why did you do it?</h2>
-        <p>I feel that <a href="http://en.wikipedia.org/wiki/Chrome_OS" target="_blank">Chome OS</a> machines have qualities which make them ideal in the machine shop. They are always up to date, secure, have only your cloud-stored files/applications available, relatively cheap, and easily swappable should something bad happen...</p>
-
-        <p>The common place alternative is an out of date Windows machine which is usually disconnected from the network, only has local accounts, and is running unknown (potentially malicious) software. Files are typically transferred by flash-drive-sneaker-net.</p>
-
-        <h2>How do I learn more about this amazing application?</h2>
-        <p>The source code and documentation are available on github (<a href="https://github.com/sir-buckyball/chrome-gcode-sender" target="_blank">https://github.com/sir-buckyball/chrome-gcode-sender</a>). Please feel free to make improvements or file bugs there.</p>
-
-        <h2>What libraries did you use?</h2>
-        <ul>
-          <li><a href="http://paperjs.org/" target="_blank">paper.js</a> - canvas rendering library</li>
-          <li><a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> - layout library (makes things pretty)</li>
-          <li><a href="http://momentjs.com/" target="_blank">Moment.js</a> - time library</li>
-          <li><a href="http://jquery.com/" target="_blank">jQuery</a> - general javascript utilities</li>
-          <li><a href="http://developer.chrome.com/apps/serial.html" target="_blank">chrome.serial</a> - chrome serial API</li>
-        </ul>
-      </div>
+  <div class="container" ng-show="warningService.warnings.length">
+    <div class="alert alert-warning alert-dismissable">
+      <button type="button" class="close" aria-hidden="true" ng-click="warningService.clear()">&times;</button>
+      <div ng-repeat="w in warningService.warnings track by $index">{{w}}</div>
     </div>
   </div>
+
+  <div class="tab-content" id="main-views" ui-view></div>
 </body>
 </html>

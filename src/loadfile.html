@@ -1,0 +1,40 @@
+<!-- this input is needed to let a user select a file, but it is ugly so we hide it. -->
+<input type="file" id="input-file-local" style="display:none">
+
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <table width="100%">
+        <tr>
+          <td>
+            <span id="render-canvas-heading"><em>empty workspace</em></span>
+          </td>
+          <td align="right">
+            <span class="btn-toolbar-inline">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-primary" ng-click="openFile()">
+                  <span class="glyphicon glyphicon-open"></span>
+                  open local file
+                </button>
+              </div>
+
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-success" ng-click="sendFileToMachine()" ng-disabled="!machineService.isConnected">
+                  <span class="glyphicon glyphicon-transfer"></span>
+                  send to machine
+                </button>
+              </div>
+            </span>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="panel-body" id="render-canvas-holder">
+      <div id="warnings-render" class="alert alert-warning" hidden></div>
+      <canvas id="render-canvas" height="480px" width="720px"></canvas>
+    </div>
+    <div class="panel-footer">
+      <div id="info-render"></div>
+    </div>
+  </div>
+</div>
