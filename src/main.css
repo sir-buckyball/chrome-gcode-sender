@@ -33,15 +33,33 @@ html {
 	font-family: monospace;
 	font-size: smaller;
   overflow-y: scroll;
-  height: 20em;
+  height: 24em;
   -webkit-user-select: text;
 }
+
+@media (min-width: 990px) and (min-height: 480px) {
+  #console-log {
+    height: 26em;
+  }
+}
+@media (min-width: 990px) and (min-height: 640px) {
+  #console-log {
+    height: 40em;
+  }
+}
+@media (min-width: 990px) and (min-height: 768px) {
+  #console-log {
+    height: 52em;
+  }
+}
+
+
 .log-user-entry {
   display: block;
-  background-color: #F8F8F8;
 }
 .log-user-entry:before {
   content: "> ";
+  color: #999;
 }
 
 .btn-estop {
@@ -67,4 +85,13 @@ html {
 #render-canvas {
   display: block;
   margin: 0 auto;
+}
+
+#console-container {
+  padding: 1px;
+}
+
+#console-container .form-group,
+#console-container form {
+  margin: 0;
 }

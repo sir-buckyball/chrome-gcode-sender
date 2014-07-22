@@ -169,23 +169,21 @@
           ({{machineService.commandQueue.length}} enqueued commands)
         </small>
       </div>
-      <div class="panel-body">
-        <div class="form-group">
-          <div id="console-log" scroll-glue>
-            <div ng-repeat="l in machineService.logs track by $index"
-                ng-class="{'is-ack': l.isAck, 'log-user-entry': !l.remoteSource, 'log-remote-entry': l.remoteSource}">{{l.msg}}</div>
-          </div>
-          <form class="form" role="form" ng-submit="sendManualCommand(manualCommand)">
-            <div class="input-group">
-              <input type="text" class="form-control" id="input-control-cmd"
-                  ng-model="manualCommand" ng-disabled="!machineService.isConnected">
-              <div class="input-group-btn">
-                <button type="submit" class="btn btn-default"
-                    ng-disabled="!machineService.isConnected">send</button>
-              </div>
-            </div>
-          </form>
+      <div class="panel-body" id="console-container">
+        <div id="console-log" scroll-glue>
+          <div ng-repeat="l in machineService.logs track by $index"
+              ng-class="{'is-ack': l.isAck, 'log-user-entry': !l.remoteSource, 'log-remote-entry': l.remoteSource}">{{l.msg}}</div>
         </div>
+        <form class="form" role="form" ng-submit="sendManualCommand(manualCommand)">
+          <div class="input-group">
+            <input type="text" class="form-control" id="input-control-cmd"
+                ng-model="manualCommand" ng-disabled="!machineService.isConnected">
+            <div class="input-group-btn">
+              <button type="submit" class="btn btn-default"
+                  ng-disabled="!machineService.isConnected">send</button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </span>
