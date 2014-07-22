@@ -3,8 +3,6 @@
 
 // TODO: something is causing it to be terribly slow...
 // TODO: come back to load file, previous file is gone... (state loss)
-// sending seemed to stop working...
-
 
 
 /**

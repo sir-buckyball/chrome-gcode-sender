@@ -231,7 +231,7 @@ app.service('machineService', function($rootScope, warningService) {
 
   // Log errors
   chrome.serial.onReceiveError.addListener(function(info) {
-    console.log("error with serial communication: " + info.error);
+    warningService.warn("connection", "error with serial communication: " + info.error);
     $rootScope.$apply();
   });
 
@@ -267,7 +267,6 @@ app.service('machineService', function($rootScope, warningService) {
     connect:connect,
     disconnect:disconnect,
     enqueueCommands:enqueueCommands,
-    processCommandQueue:processCommandQueue,
     emergencyStop:emergencyStop
   };
   return api;
