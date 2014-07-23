@@ -85,7 +85,42 @@ html {
 #render-canvas {
   display: block;
   margin: 0 auto;
+  height: 260px;
+  width: 418px;
 }
+@media (min-height: 640px) {
+  #render-canvas {
+    height: 430px;
+  }
+}
+@media (min-height: 720px) {
+  #render-canvas {
+    height: 500px;
+  }
+}
+@media (min-height: 768px) {
+  #render-canvas {
+    height: 550px;
+  }
+}
+
+@media (min-width: 750px) {
+  #render-canvas {
+    width: 688px;
+  }
+}
+@media (min-width: 970px) {
+  #render-canvas {
+    width: 908px;
+  }
+}
+@media (min-width: 1170px) {
+  #render-canvas {
+    width: 1108px;
+  }
+}
+
+
 
 #console-container {
   padding: 1px;
