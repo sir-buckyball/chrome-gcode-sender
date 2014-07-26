@@ -70,9 +70,9 @@ function analyzeGcode(gcode) {
   var feedrate = 1000000000;
   var estimatedExecutionTimeMin = 0;
 
-  for (var i = 0; i < commandSequence.length; i++) {
+  for (var i = 0; i < gcode.length; i++) {
     var prevPos = {"X": pos.X, "Y": pos.Y, "Z": pos.Z};
-    var command = commandSequence[i];
+    var command = gcode[i];
     var parts = breakupGcodeCommand(command);
 
     var cType = parts[0][0];

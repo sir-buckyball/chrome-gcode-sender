@@ -1,0 +1,130 @@
+<div class="container">
+  <div class="col-sm-8">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        workspace dimensions
+      </div>
+      <div class="panel-body">
+        <form class="form-horizontal" role="form" action="#">
+          <div class="form-group">
+            <label for="width" class="col-sm-2 control-label">width</label>
+            <div class="col-sm-10">
+              <input name="width" class="form-control" type="number" ng-model="settings.workspace_width_mm">
+            </div>
+            <span class="help-block col-sm-offset-2">The width (X) of the machine workspace in millimeters.</span>
+          </div>
+          <div class="form-group">
+            <label for="depth" class="col-sm-2 control-label">depth</label>
+            <div class="col-sm-10">
+              <input name="depth" class="form-control" type="number" ng-model="settings.workspace_depth_mm">
+            </div>
+            <span class="help-block col-sm-offset-2">The depth (Y) of the machine workspace in millimeters.</span>
+          </div>
+          <div class="form-group">
+            <label for="height" class="col-sm-2 control-label">height(Z)</label>
+            <div class="col-sm-10">
+              <input name="height" class="form-control" type="number" ng-model="settings.workspace_height_mm">
+            </div>
+            <span class="help-block col-sm-offset-2">The height (Z) of the machine workspace in millimeters.</span>
+          </div>
+
+          <hr>
+
+          <div class="form-group">
+            <label for="port" class="col-sm-2 control-label">port</label>
+            <div class="col-sm-10">
+              <select name="port" class="form-control"
+                  ng-model="settings.workspace_port">
+                  <option ng-value="path" ng-repeat="path in deviceHolder.devices">{{path}}</option>
+              </select>
+            </div>
+            <span class="help-block col-sm-offset-2">The serial port to use for communications.</span>
+          </div>
+          <div class="form-group">
+            <label for="baud" class="col-sm-2 control-label">baud rate</label>
+            <div class="col-sm-10">
+              <input name="baud" class="form-control" type="number" ng-model="settings.workspace_baud">
+            </div>
+            <span class="help-block col-sm-offset-2">The communication speed (typically 57600 or 115200).</span>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        custom gcode
+      </div>
+      <div class="panel-body">
+        <form class="form-horizontal" role="form" action="#">
+          <div class="col-sm-6">
+            <label for="preamble">preamble</label>
+            <textarea name="preamble" rows="4" class="wide" ng-model="settings.gcode_preamble"></textarea>
+          </div>
+          <div class="col-sm-6">
+            <label for="postamble">postamble</label>
+            <textarea name="postamble" rows="4" class="wide" ng-model="settings.gcode_postamble"></textarea>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-4">
+    <div class="bottom-margin">
+      <button type="submit" class="btn btn-primary wide" ng-click="saveSettings()">save</button>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        control panel settings
+      </div>
+      <div class="panel-body">
+        <form class="form-horizontal" role="form" action="#">
+
+          <div class="checkbox">
+            <input name="show-estop" type="checkbox" ng-model="settings.workspace_show_estop">
+            <label for="show-estop">show e-stop button</label>
+          </div>
+
+          <div class="checkbox">
+            <input name="show-spindle" type="checkbox" ng-model="settings.workspace_show_spindle">
+            <label for="show-spindle">show spindle controls</label>
+          </div>
+
+          <div class="checkbox">
+            <input name="show-home" type="checkbox" ng-model="settings.workspace_show_home">
+            <label for="show-home">show homing controls</label>
+          </div>
+
+          <div class="checkbox">
+            <input name="show-zero" type="checkbox" ng-model="settings.workspace_show_zero">
+            <label for="show-zero">show zeroing controls</label>
+          </div>
+        </form>
+      </div>
+    </div>        
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        jog settings
+      </div>
+      <div class="panel-body">
+        <form class="form" role="form" action="#">
+           <div class="form-group">
+            <label for="input-jog-feedrate" class="control-label">feedrate</label>
+            <input id="input-jog-feedrate" class="form-control" type="number" min="0"
+                ng-model="settings.workspace_jog_feedrate">
+            <p class="help-block">Feedrate used when jogging (mm/min). 0 omits feedrate.</p>
+          </div>
+
+          <div class="checkbox">
+            <input id="input-jog-rapid" type="checkbox" ng-model="settings.workspace_jog_rapid">
+            <label for="input-job-rapid">rapid movement (G0)</label>
+            <p class="help-block">faster, but non-linear movements.</p>
+          </div>
+        </form>
+      </div>
+    </div>        
+  </div>
+</div>

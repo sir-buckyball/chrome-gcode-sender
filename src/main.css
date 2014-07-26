@@ -4,19 +4,21 @@ html {
 }
 
 .distributed-box {
-  display: box;
-  display: -webkit-box;
-
-  box-pack: justify;
-  -webkit-box-pack: justify;
-
-  box-align: center;
-  -webkit-box-align: center;
+  display: flex;
+  justify-content: space-between;
 }
 
 .centered {
-  box-pack: center;
-  -webkit-box-pack: center;
+  align-content: center;
+}
+
+.lonely-centered {
+  justify-content: space-around;
+  align-content: center;
+}
+
+.flex {
+  flex: auto;
 }
 
 #jog-panel table {
@@ -33,15 +35,38 @@ html {
 	font-family: monospace;
 	font-size: smaller;
   overflow-y: scroll;
-  height: 20em;
+  height: 24em;
   -webkit-user-select: text;
 }
+
+@media (min-width: 768px) and (min-height: 480px) {
+  #console-log {
+    height: 26em;
+  }
+}
+@media (min-width: 768px) and (min-height: 600px) {
+  #console-log {
+    height: 36em;
+  }
+}
+@media (min-width: 768px) and (min-height: 640px) {
+  #console-log {
+    height: 40em;
+  }
+}
+@media (min-width: 768px) and (min-height: 768px) {
+  #console-log {
+    height: 51em;
+  }
+}
+
+
 .log-user-entry {
   display: block;
-  background-color: #F8F8F8;
 }
 .log-user-entry:before {
   content: "> ";
+  color: #999;
 }
 
 .btn-estop {
@@ -67,4 +92,76 @@ html {
 #render-canvas {
   display: block;
   margin: 0 auto;
+  height: 260px;
+  width: 418px;
+}
+@media (min-height: 600px) {
+  #render-canvas {
+    height: 380px;
+  }
+}
+@media (min-height: 640px) {
+  #render-canvas {
+    height: 430px;
+  }
+}
+@media (min-height: 720px) {
+  #render-canvas {
+    height: 500px;
+  }
+}
+@media (min-height: 768px) {
+  #render-canvas {
+    height: 550px;
+  }
+}
+
+@media (min-width: 750px) {
+  #render-canvas {
+    width: 688px;
+  }
+}
+@media (min-width: 970px) {
+  #render-canvas {
+    width: 908px;
+  }
+}
+@media (min-width: 1170px) {
+  #render-canvas {
+    width: 1108px;
+  }
+}
+
+.control-section {
+  margin-bottom: 2em;
+}
+
+
+
+#console-container {
+  padding: 1px;
+}
+
+#console-container .form-group,
+#console-container form {
+  margin: 0;
+}
+
+.block {
+  display: flex;
+  flex-flow: row;
+}
+
+.stack {
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
+}
+
+.bottom-margin {
+  margin-bottom: 20px;
+}
+
+.wide {
+  width: 100%;
 }
