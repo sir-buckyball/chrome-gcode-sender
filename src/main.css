@@ -157,3 +157,11 @@ html {
   flex-flow: column;
   justify-content: space-around;
 }
+
+.bottom-margin {
+  margin-bottom: 20px;
+}
+
+.wide {
+  width: 100%;
+}

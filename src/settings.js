@@ -27,7 +27,9 @@ app.service('settingsService', function($rootScope) {
     workspace_show_spindle: false,
     workspace_show_zero: false,
     workspace_jog_feedrate: 0,
-    workspace_jog_rapid: false
+    workspace_jog_rapid: false,
+    gcode_preamble: "",
+    gcode_postamble: ""
   };
 
   // Load any persisted settings into a global variable.
@@ -52,6 +54,8 @@ app.service('settingsService', function($rootScope) {
       settings.workspace_show_zero = s["workspace-show-zero"] || false;
       settings.workspace_jog_feedrate = Number(s["workspace-jog-feedrate"]) || 0;
       settings.workspace_jog_rapid = s["workspace-jog-rapid"] || false;
+      settings.gcode_preamble = s["gcode-preamble"] || "";
+      settings.gcode_postamble = s["gcode-postamble"] || "";
       console.log("settings loaded from storage.\n" + JSON.stringify(settings));
       $rootScope.$apply();
     });
@@ -72,6 +76,8 @@ app.service('settingsService', function($rootScope) {
     s["workspace-show-zero"] = settings.workspace_show_zero;
     s["workspace-jog-feedrate"] = settings.workspace_jog_feedrate;
     s["workspace-jog-rapid"] = settings.workspace_jog_rapid;
+    s["gcode-preamble"] = settings.gcode_preamble;
+    s["gcode-postamble"] = settings.gcode_postamble;
     chrome.storage.local.set({"settings": s});
     console.log("settings saved.\n" + JSON.stringify(s));
   };

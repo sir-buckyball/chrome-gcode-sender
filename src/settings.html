@@ -50,9 +50,31 @@
         </form>
       </div>
     </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        custom gcode
+      </div>
+      <div class="panel-body">
+        <form class="form-horizontal" role="form" action="#">
+          <div class="col-sm-6">
+            <label for="preamble">preamble</label>
+            <textarea name="preamble" rows="4" class="wide" ng-model="settings.gcode_preamble"></textarea>
+          </div>
+          <div class="col-sm-6">
+            <label for="postamble">postamble</label>
+            <textarea name="postamble" rows="4" class="wide" ng-model="settings.gcode_postamble"></textarea>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
   <div class="col-sm-4">
+    <div class="bottom-margin">
+      <button type="submit" class="btn btn-primary wide" ng-click="saveSettings()">save</button>
+    </div>
+
     <div class="panel panel-default">
       <div class="panel-heading">
         control panel settings
@@ -90,9 +112,7 @@
         </form>
       </div>
     </div>        
-  </div>
 
-  <div class="col-sm-4">
     <div class="panel panel-default">
       <div class="panel-heading">
         jog settings
@@ -116,9 +136,5 @@
         </form>
       </div>
     </div>        
-  </div>
-
-  <div class="col-sm-12">
-    <button type="submit" class="btn btn-primary col-sm-10 col-sm-offset-1" ng-click="saveSettings()">save</button>
   </div>
 </div>

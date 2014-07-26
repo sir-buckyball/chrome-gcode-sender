@@ -404,7 +404,19 @@ app.controller('loadFileCtrl', function($scope, $state, settingsService, machine
 
   $scope.sendFileToMachine = function() {
     console.log("enqueing file command sequence.");
+
+    if (settingsService.settings.gcode_preamble) {
+      machineService.enqueueCommands(
+          settingsService.settings.gcode_preamble.split("\n"));
+    }
+
     machineService.enqueueCommands($scope.commandSequence);
+
+    if (settingsService.settings.gcode_postamble) {
+      machineService.enqueueCommands(
+          settingsService.settings.gcode_postamble.split("\n"));
+    }
+
     $state.go("controlpanel");
   }
 
