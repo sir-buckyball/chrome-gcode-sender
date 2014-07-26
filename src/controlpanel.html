@@ -86,7 +86,7 @@
     <!-- TODO: make homing buttons optional since they can be considered dangerous on some machines. -->
     <div class="control-section">
       <!-- <h4>homing</h4> -->
-      <div class="distributed-box">
+      <div class="distributed-box" ng-show="settings.workspace_show_home">
         <button class="btn btn-default flex"
             ng-click="sendCommands(['G28 X0'])"
             ng-disabled="!machineService.isConnected">Home X</button>
