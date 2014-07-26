@@ -291,6 +291,8 @@ app.controller('loadFileCtrl', function($scope, $state, settingsService, machine
         pos.Y = arcEnd.y;
       } else if (cType == "G" && cNum === 4) {
         // dwell
+      } else if (cType == "G" && cNum === 9) {
+        // exact stop, non-modal
       } else if (cType == "G" && cNum === 17) {
         // XY plane selection
         // TODO: support other axis specification
@@ -316,6 +318,10 @@ app.controller('loadFileCtrl', function($scope, $state, settingsService, machine
       } else if (cType == "G" && cNum === 40) {
         // tool radius compensation off.
         // TODO: implement tool radius compensation.
+      } else if (cType == "G" && cNum === 61) {
+        // exact stop, modal
+      } else if (cType == "G" && cNum === 64) {
+        // cancel exact stop, modal
       } else if (cType == "G" && cNum === 90) {
         // absolute coordinates.
         isRelative = false;
