@@ -82,10 +82,7 @@
       </div>
     </div>
 
-
-    <!-- TODO: make homing buttons optional since they can be considered dangerous on some machines. -->
     <div class="control-section">
-      <!-- <h4>homing</h4> -->
       <div class="distributed-box" ng-show="settings.workspace_show_home">
         <button class="btn btn-default flex"
             ng-click="sendCommands(['G28 X0'])"
@@ -99,6 +96,19 @@
       </div>
     </div>
 
+    <div class="control-section">
+      <div class="distributed-box" ng-show="settings.workspace_show_zero">
+        <button class="btn btn-default flex"
+            ng-click="sendCommands(['G92 X0'])"
+            ng-disabled="!machineService.isConnected">Zero X</button>
+        <button class="btn btn-default flex"
+            ng-click="sendCommands(['G92 Y0'])"
+            ng-disabled="!machineService.isConnected">Zero Y</button>
+        <button class="btn btn-default flex"
+            ng-click="sendCommands(['G92 Z0'])"
+            ng-disabled="!machineService.isConnected">Zero Z</button>
+      </div>
+    </div>
 
     <div class="control-section" ng-show="settings.workspace_show_spindle">
       <h4>spindle controls</h4>
@@ -111,7 +121,6 @@
             ng-click="sendCommands(['M5'])" ng-disabled="!machineService.isConnected">⊘</button>
       </div>
     </div>
-
   </span>
 
 

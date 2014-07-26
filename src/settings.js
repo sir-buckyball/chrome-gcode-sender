@@ -25,6 +25,7 @@ app.service('settingsService', function($rootScope) {
     workspace_show_estop: true,
     workspace_show_home: false,
     workspace_show_spindle: false,
+    workspace_show_zero: false,
     workspace_jog_feedrate: 0,
     workspace_jog_rapid: false
   };
@@ -48,6 +49,7 @@ app.service('settingsService', function($rootScope) {
       settings.workspace_show_estop = s["workspace-show-estop"] || false;
       settings.workspace_show_home = s["workspace-show-home"] || false;
       settings.workspace_show_spindle = s["workspace-show-spindle"] || false;
+      settings.workspace_show_zero = s["workspace-show-zero"] || false;
       settings.workspace_jog_feedrate = Number(s["workspace-jog-feedrate"]) || 0;
       settings.workspace_jog_rapid = s["workspace-jog-rapid"] || false;
       console.log("settings loaded from storage.\n" + JSON.stringify(settings));
@@ -67,6 +69,7 @@ app.service('settingsService', function($rootScope) {
     s["workspace-show-estop"] = settings.workspace_show_estop;
     s["workspace-show-home"] = settings.workspace_show_home;
     s["workspace-show-spindle"] = settings.workspace_show_spindle;
+    s["workspace-show-zero"] = settings.workspace_show_zero;
     s["workspace-jog-feedrate"] = settings.workspace_jog_feedrate;
     s["workspace-jog-rapid"] = settings.workspace_jog_rapid;
     chrome.storage.local.set({"settings": s});
