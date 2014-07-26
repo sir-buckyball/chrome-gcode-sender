@@ -26,7 +26,7 @@ app.controller('controlPanelCtrl', function($scope, hotkeys, settingsService, ma
     .add({
       combo: ['left', 'j'],
       description: 'move the X axis in the - direction',
-      callback: function() {$scope.relativeMove("X")}
+      callback: function() {$scope.relativeMove("X-")}
     })
     .add({
       combo: ['right', 'l'],
