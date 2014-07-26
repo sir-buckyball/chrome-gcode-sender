@@ -1,5 +1,5 @@
 <div class="container">
-  <div class="col-md-8">
+  <div class="col-sm-8">
     <div class="panel panel-default">
       <div class="panel-heading">
         workspace dimensions
@@ -7,52 +7,52 @@
       <div class="panel-body">
         <form class="form-horizontal" role="form" action="#">
           <div class="form-group">
-            <label for="width" class="col-md-2 control-label">width</label>
-            <div class="col-md-10">
+            <label for="width" class="col-sm-2 control-label">width</label>
+            <div class="col-sm-10">
               <input name="width" class="form-control" type="number" ng-model="settings.workspace_width_mm">
             </div>
-            <span class="help-block col-md-offset-2">The width (X) of the machine workspace in millimeters.</span>
+            <span class="help-block col-sm-offset-2">The width (X) of the machine workspace in millimeters.</span>
           </div>
           <div class="form-group">
-            <label for="depth" class="col-md-2 control-label">depth</label>
-            <div class="col-md-10">
+            <label for="depth" class="col-sm-2 control-label">depth</label>
+            <div class="col-sm-10">
               <input name="depth" class="form-control" type="number" ng-model="settings.workspace_depth_mm">
             </div>
-            <span class="help-block col-md-offset-2">The depth (Y) of the machine workspace in millimeters.</span>
+            <span class="help-block col-sm-offset-2">The depth (Y) of the machine workspace in millimeters.</span>
           </div>
           <div class="form-group">
-            <label for="height" class="col-md-2 control-label">height(Z)</label>
-            <div class="col-md-10">
+            <label for="height" class="col-sm-2 control-label">height(Z)</label>
+            <div class="col-sm-10">
               <input name="height" class="form-control" type="number" ng-model="settings.workspace_height_mm">
             </div>
-            <span class="help-block col-md-offset-2">The height (Z) of the machine workspace in millimeters.</span>
+            <span class="help-block col-sm-offset-2">The height (Z) of the machine workspace in millimeters.</span>
           </div>
 
           <hr>
 
           <div class="form-group">
-            <label for="port" class="col-md-2 control-label">port</label>
-            <div class="col-md-10">
+            <label for="port" class="col-sm-2 control-label">port</label>
+            <div class="col-sm-10">
               <select name="port" class="form-control"
                   ng-model="settings.workspace_port">
                   <option ng-value="path" ng-repeat="path in deviceHolder.devices">{{path}}</option>
               </select>
             </div>
-            <span class="help-block col-md-offset-2">The serial port to use for communications.</span>
+            <span class="help-block col-sm-offset-2">The serial port to use for communications.</span>
           </div>
           <div class="form-group">
-            <label for="baud" class="col-md-2 control-label">baud rate</label>
-            <div class="col-md-10">
+            <label for="baud" class="col-sm-2 control-label">baud rate</label>
+            <div class="col-sm-10">
               <input name="baud" class="form-control" type="number" ng-model="settings.workspace_baud">
             </div>
-            <span class="help-block col-md-offset-2">The communication speed (typically 57600 or 115200).</span>
+            <span class="help-block col-sm-offset-2">The communication speed (typically 57600 or 115200).</span>
           </div>
         </form>
       </div>
     </div>
   </div>
 
-  <div class="col-md-4">
+  <div class="col-sm-4">
     <div class="panel panel-default">
       <div class="panel-heading">
         control panel settings
@@ -78,7 +78,7 @@
     </div>        
   </div>
 
-  <div class="col-md-4">
+  <div class="col-sm-4">
     <div class="panel panel-default">
       <div class="panel-heading">
         jog settings
@@ -95,7 +95,7 @@
           <div class="checkbox">
             <label for="input-job-rapid">
               <input id="input-jog-rapid" type="checkbox" ng-model="settings.workspace_jog_rapid">
-              use rapid movement (G0)
+              rapid movement (G0)
               <p class="help-block">faster, but non-linear movements.</p>
             </label>
           </div>
@@ -104,7 +104,7 @@
     </div>        
   </div>
 
-  <div class="col-md-12">
-    <button type="submit" class="btn btn-primary col-md-10 col-md-offset-1" ng-click="saveSettings()">save</button>
+  <div class="col-sm-12">
+    <button type="submit" class="btn btn-primary col-sm-10 col-sm-offset-1" ng-click="saveSettings()">save</button>
   </div>
 </div>

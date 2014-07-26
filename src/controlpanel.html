@@ -1,123 +1,71 @@
 <div class="container">
-  <span class="col-md-4">
-    <div class="panel panel-default" id="panel-estop" ng-show="settings.workspace_show_estop">
-      <div class="panel-heading">emergency stop</div>
-      <div class="panel-body">
-        <div class="distributed-box centered">
-          <label for="emergency-stop" class="sr-only">emergency-stop</label>
-          <button id="btn-emergency-stop" name="emergency-stop" class="btn btn-danger btn-estop" ng-click="emergencyStop()">
-            <span class="glyphicon glyphicon-warning-sign"></span>
-          </button>
-        </div>
+  <span class="col-sm-4">
+    <div class="control-section" ng-show="settings.workspace_show_estop">
+      <h4>emergency stop</h4>
+      <label for="emergency-stop" class="sr-only">emergency-stop</label>
+      <div class="distributed-box lonely-centered">
+        <button id="btn-emergency-stop" name="emergency-stop"
+            class="btn btn-danger btn-estop"
+            ng-click="emergencyStop()">
+          <span class="glyphicon glyphicon-warning-sign"></span>
+        </button>
       </div>
     </div>
 
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        jog controls
-      </div>
-      <div class="panel-body" id="jog-panel">
-        <form class="form-inline" role="form" id="form-command-jog">
-          <div class="distributed-box">
-            <div>
-              <table>
-                <tr>
-                  <td>
-                    <button class="btn btn-default" id="btn-z-up"
-                        ng-click="relativeMove('Z')" ng-disabled="!machineService.isConnected">
-                      <span class="glyphicon glyphicon-arrow-up"></span>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <label>Z</label>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <button class="btn btn-default" id="btn-z-down"
-                        ng-click="relativeMove('Z-')" ng-disabled="!machineService.isConnected">
-                      <span class="glyphicon glyphicon-arrow-down"></span>
-                    </button>
-                  </td>
-                </tr>
-              </table>
-            </div>
-            <div>
-              <table>
-                <tr>
-                  <td></td>
-                  <td>
-                    <button class="btn btn-default" id="btn-y-up"
-                        ng-click="relativeMove('Y')" ng-disabled="!machineService.isConnected">
-                      <span class="glyphicon glyphicon-chevron-up"></span>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <button class="btn btn-default" id="btn-x-down"
-                        ng-click="relativeMove('X-')" ng-disabled="!machineService.isConnected">
-                      <span class="glyphicon glyphicon-chevron-left"></span>
-                    </button>
-                  </td>
-                  <td>
-                    <label>X/Y</label>
-                  </td>
-                  <td>
-                    <button class="btn btn-default" id="btn-x-up"
-                        ng-click="relativeMove('X')" ng-disabled="!machineService.isConnected">
-                      <span class="glyphicon glyphicon-chevron-right"></span>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td>
-                    <button class="btn btn-default" id="btn-y-down"
-                        ng-click="relativeMove('Y-')" ng-disabled="!machineService.isConnected">
-                      <span class="glyphicon glyphicon-chevron-down"></span>
-                    </button>
-                  </td>
-                </tr>
-              </table>
-            </div>
-            <div>
-              <table>
-                <tr>
-                  <td>
-                    <button class="btn btn-default" id="btn-x-home"
-                        ng-click="sendCommands(['G28 X0'])" ng-disabled="!machineService.isConnected">
-                      <span class="glyphicon glyphicon-home"></span> X
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <button class="btn btn-default" id="btn-y-home"
-                        ng-click="sendCommands(['G28 Y0'])" ng-disabled="!machineService.isConnected">
-                      <span class="glyphicon glyphicon-home"></span> Y
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <button class="btn btn-default" id="btn-z-home"
-                        ng-click="sendCommands(['G28 Z0'])" ng-disabled="!machineService.isConnected">
-                      <span class="glyphicon glyphicon-home"></span> Z
-                    </button>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </div>
+    <div class="control-section">
+      <h4>jog controls</h4>
 
+      <div class="distributed-box">
+        <div class="stack">
+          <button class="btn btn-default flex"
+              ng-click="relativeMove('Z')"
+              ng-disabled="!machineService.isConnected">
+            <span class="glyphicon glyphicon-arrow-up"></span>
+            +Z
+          </button>
+          <button class="btn btn-default flex"
+              ng-click="relativeMove('Z-')" ng-disabled="!machineService.isConnected">
+            <span class="glyphicon glyphicon-arrow-down"></span>
+            -Z
+          </button>
+        </div>
+        <div class="block">
+          <div class="stack">
+            <button class="btn btn-default"
+                ng-click="relativeMove('X-')" ng-disabled="!machineService.isConnected">
+              <span class="glyphicon glyphicon-chevron-left"></span>
+              -X
+            </button>
+          </div>
+          <div class="stack">
+            <button class="btn btn-default"
+                ng-click="relativeMove('Y')" ng-disabled="!machineService.isConnected">
+              <span class="glyphicon glyphicon-chevron-up"></span>
+              <div>+Y</div>
+            </button>
+            <button class="btn btn-default"
+                ng-click="relativeMove('Y-')" ng-disabled="!machineService.isConnected">
+              <div>-Y</div>
+              <span class="glyphicon glyphicon-chevron-down"></span>
+            </button>
+          </div>
+          <div class="stack">
+            <button class="btn btn-default"
+                ng-click="relativeMove('X')" ng-disabled="!machineService.isConnected">
+              +X
+              <span class="glyphicon glyphicon-chevron-right"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <form class="form-inline" role="form" id="form-command-jog">
           <div class="form-group">
-            <label for="stepsize">
+            <span>
               step size <small>({{getStepSize()}})</small>
-            </label>
-            <div class="input-group">
+            </span>
+             <div class="input-group">
               <span class="input-group-btn">
                 <button class="btn btn-default" id="btn-stepsize-down" type="button"
                     ng-click="incrementStepSize(-1)" ng-disabled="!machineService.isConnected">-</button>
@@ -134,27 +82,43 @@
       </div>
     </div>
 
-    <div class="panel panel-default" id="panel-spindle" ng-show="settings.workspace_show_spindle">
-      <div class="panel-heading">spindle controls</div>
-      <div class="panel-body">
-        <div class="distributed-box centered">
-          <button class="btn btn-default" id="btn-m3"
-              ng-click="sendCommands(['M3'])" ng-disabled="!machineService.isConnected">CW</button>
-          <button class="btn btn-default" id="btn-m4"
-              ng-click="sendCommands(['M4'])" ng-disabled="!machineService.isConnected">CCW</button>
-          <button class="btn btn-default" id="btn-m5"
-              ng-click="sendCommands(['M5'])" ng-disabled="!machineService.isConnected">OFF</button>
-        </div>
+
+    <!-- TODO: make homing buttons optional since they can be considered dangerous on some machines. -->
+    <div class="control-section">
+      <!-- <h4>homing</h4> -->
+      <div class="distributed-box">
+        <button class="btn btn-default flex"
+            ng-click="sendCommands(['G28 X0'])"
+            ng-disabled="!machineService.isConnected">Home X</button>
+        <button class="btn btn-default flex"
+            ng-click="sendCommands(['G28 Y0'])"
+            ng-disabled="!machineService.isConnected">Home Y</button>
+        <button class="btn btn-default flex"
+            ng-click="sendCommands(['G28 Z0'])"
+            ng-disabled="!machineService.isConnected">Home Z</button>
       </div>
     </div>
+
+
+    <div class="control-section" ng-show="settings.workspace_show_spindle">
+      <h4>spindle controls</h4>
+      <div class="distributed-box">
+        <button class="btn btn-default flex"
+            ng-click="sendCommands(['M3'])" ng-disabled="!machineService.isConnected">↻</button>
+        <button class="btn btn-default flex"
+            ng-click="sendCommands(['M4'])" ng-disabled="!machineService.isConnected">↺</button>
+        <button class="btn btn-default flex"
+            ng-click="sendCommands(['M5'])" ng-disabled="!machineService.isConnected">⊘</button>
+      </div>
+    </div>
+
   </span>
 
 
-  <span class="col-md-8">
+  <span class="col-sm-8">
     <div class="panel panel-default">
       <div class="panel-heading">
         <div class="dropdown pull-right">
-          <span ng-show="machineService.pendingAck">␕</span>
           <button class="btn dropdown-toggle" type="button" id="console-menu" data-toggle="dropdown">
             <span class="caret"></span>
           </button>
@@ -168,6 +132,7 @@
         <small id="lbl-enqueued-commands">
           ({{machineService.commandQueue.length}} enqueued commands)
         </small>
+        <span ng-show="machineService.pendingAck">~</span>
       </div>
       <div class="panel-body" id="console-container">
         <div id="console-log" scroll-glue>

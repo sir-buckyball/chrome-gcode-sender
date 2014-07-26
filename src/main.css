@@ -4,19 +4,21 @@ html {
 }
 
 .distributed-box {
-  display: box;
-  display: -webkit-box;
-
-  box-pack: justify;
-  -webkit-box-pack: justify;
-
-  box-align: center;
-  -webkit-box-align: center;
+  display: flex;
+  justify-content: space-between;
 }
 
 .centered {
-  box-pack: center;
-  -webkit-box-pack: center;
+  align-content: center;
+}
+
+.lonely-centered {
+  justify-content: space-around;
+  align-content: center;
+}
+
+.flex {
+  flex: auto;
 }
 
 #jog-panel table {
@@ -37,19 +39,24 @@ html {
   -webkit-user-select: text;
 }
 
-@media (min-width: 990px) and (min-height: 480px) {
+@media (min-width: 768px) and (min-height: 480px) {
   #console-log {
     height: 26em;
   }
 }
-@media (min-width: 990px) and (min-height: 640px) {
+@media (min-width: 768px) and (min-height: 600px) {
+  #console-log {
+    height: 36em;
+  }
+}
+@media (min-width: 768px) and (min-height: 640px) {
   #console-log {
     height: 40em;
   }
 }
-@media (min-width: 990px) and (min-height: 768px) {
+@media (min-width: 768px) and (min-height: 768px) {
   #console-log {
-    height: 52em;
+    height: 51em;
   }
 }
 
@@ -88,6 +95,11 @@ html {
   height: 260px;
   width: 418px;
 }
+@media (min-height: 600px) {
+  #render-canvas {
+    height: 380px;
+  }
+}
 @media (min-height: 640px) {
   #render-canvas {
     height: 430px;
@@ -120,6 +132,10 @@ html {
   }
 }
 
+.control-section {
+  margin-bottom: 2em;
+}
+
 
 
 #console-container {
@@ -129,4 +145,15 @@ html {
 #console-container .form-group,
 #console-container form {
   margin: 0;
+}
+
+.block {
+  display: flex;
+  flex-flow: row;
+}
+
+.stack {
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
 }
