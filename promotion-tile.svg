@@ -1,18 +1,19 @@
-<svg width="440" height="280" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+<?xml version="1.0"?>
+<svg width="440" height="280" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
  <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
  <g>
   <title>gcode-sender</title>
   <g id="svg_14">
    <g id="svg_10">
-    <rect id="svg_8" height="20.50114" width="3.660918" y="144.477314" x="101.736746" stroke-linecap="null" stroke-linejoin="null" stroke-width="2" stroke="#000000" fill="#000000"/>
+    <rect id="svg_8" height="20.50114" width="3.66092" y="144.47731" x="101.73675" stroke-linecap="null" stroke-linejoin="null" stroke-width="2" stroke="#000000" fill="#000000"/>
     <g id="svg_9">
-     <rect id="svg_1" height="72.486172" width="27.822976" y="70.526774" x="89.289626" stroke-width="2" stroke="#000000" fill="#bfbfbf"/>
-     <path id="svg_6" d="m89.289627,96.153206l-70.289627,0l0,122.274651l98.844772,0l0,-35.144821l-21.233322,0l0,15.37587l-51.985008,0l0,-79.808022l44.663185,0l0,-22.697678z" stroke-linecap="null" stroke-linejoin="null" stroke-width="2" stroke="#000000" fill="#bfbfbf"/>
-     <rect id="svg_7" height="8.054019" width="96.648231" y="175.229024" x="60.002283" stroke-linecap="null" stroke-linejoin="null" stroke-width="2" stroke="#000000" fill="#bfbfbf"/>
+     <rect id="svg_1" height="72.48617" width="27.82298" y="70.52677" x="89.28963" stroke-width="2" stroke="#000000" fill="#bfbfbf"/>
+     <path id="svg_6" d="m89.289627,96.153214l-70.289627,0l0,122.274643l98.844772,0l0,-35.144821l-21.233322,0l0,15.37587l-51.985012,0l0,-79.808022l44.663189,0l0,-22.69767z" stroke-linecap="null" stroke-linejoin="null" stroke-width="2" stroke="#000000" fill="#bfbfbf"/>
+     <rect id="svg_7" height="8.05402" width="96.64823" y="175.22902" x="60.00228" stroke-linecap="null" stroke-linejoin="null" stroke-width="2" stroke="#000000" fill="#bfbfbf"/>
     </g>
    </g>
-   <text transform="matrix(0.732183566944054,0,0,0.732183566944054,241.47835885243734,-5.5441048328471405) " x="59.14402" y="228.395911" id="svg_12" fill="#000000" stroke="#000000" stroke-width="0" font-size="160" font-family="Monospace" text-anchor="middle" xml:space="preserve">code</text>
-   <text transform="matrix(0.732183566944054,0,0,0.732183566944054,241.47835885243734,-5.5441048328471405) " x="59.14402" y="305.395911" id="svg_13" fill="#000000" stroke="#000000" stroke-width="0" font-size="104" font-family="Monospace" text-anchor="middle" xml:space="preserve">sender</text>
+   <text transform="matrix(0.5698423184635668,0,0,0.5698423184635668,258.62333729999364,25.792758660605887) " x="50.292396" y="184.717291" id="svg_12" fill="#000000" stroke="#000000" stroke-width="0" font-size="160" font-family="Monospace" text-anchor="middle" xml:space="preserve">gcode</text>
+   <text transform="matrix(0.7140094834359092,0,0,0.7140094834359092,246.05318141250584,-1.7636765654654019) " x="59.14402" y="306.796452" id="svg_13" fill="#000000" stroke="#000000" stroke-width="0" font-size="104" font-family="Monospace" text-anchor="middle" xml:space="preserve">sender</text>
   </g>
  </g>
 </svg>
