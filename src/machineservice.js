@@ -118,6 +118,23 @@ app.service('machineService', function($rootScope, warningService) {
    * @param {bool} isSend True if the message was outgoing
    */
   var logCommand = function(cmd, isSend) {
+    // Determine the node to add the incoming text to. Since incoming text
+    // can be broken into multiple calls to this funciton, we want to join
+    // blocks and only split when we detect interleving or a newline.
+    var nodeToWriteTo;
+    var lastChild = api.logs[api.logs.length - 1];
+    if (!isSend && lastChild && lastChild.remoteSource
+        && incomingCommandLookbackChar != "\n") {
+      // incoming data may be split, so grab the last element instead of a new one.
+      nodeToWriteTo = lastChild;
+    } else if (lastChild && !lastChild.msg) {
+      lastChild.remoteSource = !isSend;
+      nodeToWriteTo = lastChild;
+    } else {
+      nodeToWriteTo = {remoteSource: !isSend, msg: ""}
+      api.logs.push(nodeToWriteTo);
+    }
+
     // For commands received, we want to look for an 'ok' to clear
     // our command block.
     if (!isSend) {
@@ -130,31 +147,11 @@ app.service('machineService', function($rootScope, warningService) {
       }
     }
 
-    // Determine the node to add the incoming text to. Since incoming text
-    // can be broken into multiple calls to this funciton, we want to join
-    // blocks and only split when we detect interleving or a newline.
-    var nodeToWriteTo;
-    var lastChild = api.logs[api.logs.length - 1];
-    if (!isSend && lastChild && lastChild.remoteSource) {
-      // incoming data may be split, so grab the last element instead of a new one.
-      nodeToWriteTo = lastChild;
-    } else if (lastChild && !lastChild.msg) {
-      lastChild.remoteSource = !isSend;
-      nodeToWriteTo = lastChild;
-    } else {
-      nodeToWriteTo = {remoteSource: !isSend, msg: ""}
-      api.logs.push(nodeToWriteTo);
-    }
-
     // Add each line to the console output.
     lines = cmd.split("\n");
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i];
       line = line.replace("\r", "");
-      if (line.length == 0) {
-        continue;
-      }
-
       nodeToWriteTo.msg = nodeToWriteTo.msg + makeHumanReadable(line);
 
       // Tag nodes which are just an ack.
