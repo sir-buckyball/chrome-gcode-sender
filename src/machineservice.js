@@ -3,7 +3,8 @@
  */
 app.service('machineService', function($rootScope, warningService) {
   // TODO: make this configurable.
-  var CONSOLE_MAX_SCROLLBACK = 1000;
+  // NOTE: A scrollback of 1000 causes chromebooks to stutter once full.
+  var CONSOLE_MAX_SCROLLBACK = 120;
 
   var connectionId = null;
 
