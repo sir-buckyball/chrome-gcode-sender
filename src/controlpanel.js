@@ -5,7 +5,8 @@
 /**
  * The controller for the control panel.
  */
-app.controller('controlPanelCtrl', function($scope, hotkeys, settingsService, machineService) {
+app.controller('controlPanelCtrl', function($scope, $timeout,
+    hotkeys, settingsService, machineService) {
   $scope.emergencyStop = machineService.emergencyStop;
   $scope.settings = settingsService.settings;
   $scope.machineService = machineService;
@@ -58,7 +59,7 @@ app.controller('controlPanelCtrl', function($scope, hotkeys, settingsService, ma
       description: 'focus the manual command entry',
       callback: function() {
         // Let the event finish propagating.
-        setTimeout(function() {
+        $timeout(function() {
           $("#input-control-cmd").focus();
         }, 1);
       }
@@ -82,7 +83,7 @@ app.controller('controlPanelCtrl', function($scope, hotkeys, settingsService, ma
 
     if (e.keyCode == 27) { // escape; blur the manual command input.
       // the delay is to allow the current event propagation to finish.
-      setTimeout(function() {
+      $timeout(function() {
         $("#input-control-cmd").blur();
       }, 1);
 
@@ -91,7 +92,7 @@ app.controller('controlPanelCtrl', function($scope, hotkeys, settingsService, ma
       var prevCommand = ((manualInputPosition < manualInputHistory.length) ?
           manualInputHistory[manualInputPosition] : "");
       $scope.manualCommand = prevCommand;
-      setTimeout(function() {
+      $timeout(function() {
         $("#input-control-cmd")[0].setSelectionRange(prevCommand.length, prevCommand.length);
       }, 1);
     } else if (e.keyCode == 40) { // down arrow; show next history position.
@@ -99,7 +100,7 @@ app.controller('controlPanelCtrl', function($scope, hotkeys, settingsService, ma
       var nextCommand = ((manualInputPosition < manualInputHistory.length) ?
           manualInputHistory[manualInputPosition] : "");
       $scope.manualCommand = nextCommand;
-      setTimeout(function() {
+      $timeout(function() {
         $("#input-control-cmd")[0].setSelectionRange(nextCommand.length, nextCommand.length);
       }, 1);
     }
