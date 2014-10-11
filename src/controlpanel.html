@@ -76,7 +76,7 @@
                 <button class="btn btn-default" id="btn-stepsize-up" type="button"
                     ng-click="incrementStepSize(1)" ng-disabled="!machineService.isConnected">+</button>
               </span>
-            </div>                
+            </div>
           </div>
         </form>
       </div>
@@ -145,7 +145,7 @@
       </div>
       <div class="panel-body" id="console-container">
         <div id="console-log" scroll-glue>
-          <div ng-repeat="l in machineService.logs track by $index"
+          <div ng-repeat="l in logs track by $index"
               ng-class="{'is-ack': l.isAck, 'log-user-entry': !l.remoteSource, 'log-remote-entry': l.remoteSource}">{{l.msg}}</div>
         </div>
         <form class="form" role="form" ng-submit="sendManualCommand(manualCommand)">

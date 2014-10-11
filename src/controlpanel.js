@@ -10,8 +10,24 @@ app.controller('controlPanelCtrl', function($scope, $timeout,
   $scope.emergencyStop = machineService.emergencyStop;
   $scope.settings = settingsService.settings;
   $scope.machineService = machineService;
+  $scope.logs = machineService.logs.slice();
 
   $scope.stepSize = 1;
+
+  // Rendering takes a lot of time, so only update the logs from the source of
+  // truth every once in a while.
+  var debounce = null;
+  $scope.$watch(
+    function() {return machineService.logs;},
+    function(newValue, oldValue) {
+      if (!debounce) {
+        debounce = $timeout(function() {
+          // Set the logs that we render to a _copy_ of the current logs.
+          $scope.logs = newValue.slice();
+          debounce = null;
+        }, 200);
+      }
+    }, true);
 
   hotkeys.bindTo($scope)
     .add({
