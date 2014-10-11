@@ -219,7 +219,7 @@ app.service('machineService', function($rootScope, warningService) {
   }
 
   // Process an element from the command queue every few ms.
-  window.setInterval(processCommandQueue, 50);
+  window.setInterval(processCommandQueue, 10);
 
   // Configure the console panel to display incoming messages.
   chrome.serial.onReceive.addListener(function(info) {
