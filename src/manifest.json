@@ -15,6 +15,7 @@
     }
   },
   "permissions": [
+    "fileSystem",
     "power",
     "serial",
     "storage"

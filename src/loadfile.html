@@ -1,13 +1,15 @@
 <!-- this input is needed to let a user select a file, but it is ugly so we hide it. -->
-<input type="file" id="input-file-local" style="display:none">
-
 <div class="container">
   <div class="panel panel-default">
     <div class="panel-heading">
       <table width="100%">
         <tr>
           <td>
-            <span id="render-canvas-heading"><em>empty workspace</em></span>
+            <em ng-if="!fileName">empty workspace</em>
+            <span ng-if="fileName">
+              <strong>{{fileName}}</strong>
+              <small>(last modified {{fileLastModified}})</small>
+            </span>
           </td>
           <td align="right">
             <span class="btn-toolbar-inline">

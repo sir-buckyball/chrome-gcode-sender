@@ -1,7 +1,26 @@
 app.controller('loadFileCtrl', function($scope, $state, settingsService, machineService) {
   $scope.machineService = machineService;
+  $scope.fileName = null;
+  $scope.fileLastModified = null;
 
-  $scope.handleFileSelect = function(evt) {
+  $scope.openFile = function() {
+    chrome.fileSystem.chooseEntry({
+      'type': 'openFile',
+      'accepts': [{
+        'description': 'gcode files',
+        'extensions': ['gcode', 'nc']
+      }]
+    }, function(entry) {
+      entry.file(function(file) {
+        $scope.$apply(function() {
+          processFile(file);
+        });
+      });
+    });
+  };
+
+  // This method is for handling drag-and-drop files.
+  var handleFileSelect = function(evt) {
     evt.stopPropagation();
     evt.preventDefault();
 
@@ -15,19 +34,19 @@ app.controller('loadFileCtrl', function($scope, $state, settingsService, machine
     }
 
     // only examine the first file.
-    var f = files[0];
-    $("#render-canvas-heading").html($("<strong/>").text(f.name));
-    $("#render-canvas-heading").append($("<small/>").text(
-        " (last modified " + moment(f.lastModifiedDate).fromNow() + ")"));
-
     if (files.length > 0) {
-      processFile(files[0]);
+      $scope.$apply(function() {
+        processFile(files[0]);
+      });
     } else {
       console.log("input file had no content.");
     }
   }
 
   var processFile = function(f) {
+    $scope.fileName = f.name;
+    $scope.fileLastModified = moment(f.lastModifiedDate).fromNow();
+
     // TODO: don't read binary files.
 
     console.log("processing file: " + f.name);
@@ -426,12 +445,6 @@ app.controller('loadFileCtrl', function($scope, $state, settingsService, machine
     $state.go("controlpanel");
   }
 
-  $scope.openFile = function() {
-    // Is there a more angular way?
-    $("#input-file-local").click();
-  }
-
-
   // Initialize paper.js
   paper.setup($("#render-canvas")[0]);
 
@@ -439,6 +452,5 @@ app.controller('loadFileCtrl', function($scope, $state, settingsService, machine
   renderGcode($scope.commandSequence);
 
   // Setup the drag-and-drop listeners.
-  $("#render-canvas-holder")[0].addEventListener('drop', $scope.handleFileSelect, false);
-  $("#input-file-local").change($scope.handleFileSelect);
+  $("#render-canvas-holder")[0].addEventListener('drop', handleFileSelect, false);
 });
