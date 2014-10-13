@@ -1,7 +1,7 @@
 /**
  * A service for interacting with a CNC machine.
  */
-app.service('machineService', function($rootScope, warningService) {
+app.service('machineService', function($rootScope, $timeout, warningService) {
   // TODO: make this configurable.
   // NOTE: A scrollback of 1000 causes chromebooks to stutter once full.
   var CONSOLE_MAX_SCROLLBACK = 120;
@@ -219,11 +219,12 @@ app.service('machineService', function($rootScope, warningService) {
   }
 
   // Process an element from the command queue every few ms.
-  window.setInterval(processCommandQueue, 10);
+  window.setInterval(processCommandQueue, 50);
 
   // Configure the console panel to display incoming messages.
   chrome.serial.onReceive.addListener(function(info) {
     logCommand(ab2str(info.data), false);
+    $timeout(processCommandQueue);
     $rootScope.$apply();
   });
 
