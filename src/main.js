@@ -48,7 +48,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
     ;
 });
 
-app.controller('mainCtrl', function($scope, $state,
+app.controller('mainCtrl', function($scope, $state, $window,
     settingsService, machineService, warningService) {
   settingsService.load();
   $state.go("controlpanel");
@@ -78,4 +78,9 @@ app.controller('mainCtrl', function($scope, $state,
     e.preventDefault();
     $state.go("loadfile");
   }, false);
+
+  // Setup resize events.
+  $window.addEventListener('resize', function() {
+    $scope.$broadcast('resize');
+  });
 });

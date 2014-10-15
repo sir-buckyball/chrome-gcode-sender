@@ -36,30 +36,9 @@ html {
 	font-size: smaller;
   overflow-y: scroll;
   height: 24em;
+  min-height: 12em;
   -webkit-user-select: text;
 }
-
-@media (min-width: 768px) and (min-height: 480px) {
-  #console-log {
-    height: 26em;
-  }
-}
-@media (min-width: 768px) and (min-height: 600px) {
-  #console-log {
-    height: 36em;
-  }
-}
-@media (min-width: 768px) and (min-height: 640px) {
-  #console-log {
-    height: 40em;
-  }
-}
-@media (min-width: 768px) and (min-height: 768px) {
-  #console-log {
-    height: 51em;
-  }
-}
-
 
 .log-user-entry {
   display: block;
@@ -95,26 +74,6 @@ html {
   height: 260px;
   width: 418px;
 }
-@media (min-height: 600px) {
-  #render-canvas {
-    height: 380px;
-  }
-}
-@media (min-height: 640px) {
-  #render-canvas {
-    height: 430px;
-  }
-}
-@media (min-height: 720px) {
-  #render-canvas {
-    height: 500px;
-  }
-}
-@media (min-height: 768px) {
-  #render-canvas {
-    height: 550px;
-  }
-}
 
 @media (min-width: 750px) {
   #render-canvas {
@@ -145,6 +104,20 @@ html {
 #console-container .form-group,
 #console-container form {
   margin: 0;
+}
+
+#bottom-tracker-logs {
+  bottom: 4em;
+  position: absolute;
+  height: 0;
+  width: 0;
+}
+
+#bottom-tracker-renderer {
+  bottom: 6em;
+  position: absolute;
+  height: 0;
+  width: 0;
 }
 
 .block {

@@ -172,4 +172,14 @@ app.controller('controlPanelCtrl', function($scope, $timeout,
     }
     machineService.enqueueCommands(cmds);
   }
+
+  // Update the size of various elements to fill the screen.
+  var resize = function() {
+    var anchor = document.getElementById("bottom-tracker-logs");
+    var elem = document.getElementById("console-log");
+    elem.style.setProperty("height", (anchor.getBoundingClientRect().top -
+        elem.getBoundingClientRect().top) + "px");
+  };
+  $scope.$on('resize', resize);
+  resize();
 });

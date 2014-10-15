@@ -145,6 +145,12 @@ app.controller('loadFileCtrl', function($scope, $state, settingsService, machine
     paper.view.setZoom(Math.min(scaleX, scaleY));
   }
 
+  // Set the size of the paper canvas.
+  var setSize = function(bounds) {
+    paper.view.viewSize = [bounds.width, bounds.height];
+    resizeView();
+  }
+
   /* Render the list of gcode commands onto a canvas. */
   var renderGcode = function(commandSequence) {
     console.time("renderGcode");
@@ -453,4 +459,15 @@ app.controller('loadFileCtrl', function($scope, $state, settingsService, machine
 
   // Setup the drag-and-drop listeners.
   $("#render-canvas-holder")[0].addEventListener('drop', handleFileSelect, false);
+
+  // Update the size of various elements to fill the screen.
+  var resize = function() {
+    var anchor = document.getElementById("bottom-tracker-renderer");
+    var elem = document.getElementById("render-canvas");
+    elem.style.setProperty("height", (anchor.getBoundingClientRect().top -
+        elem.getBoundingClientRect().top) + "px");
+    setSize(elem.getBoundingClientRect());
+  };
+  $scope.$on('resize', resize);
+  resize();
 });
