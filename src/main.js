@@ -48,8 +48,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
     ;
 });
 
-app.controller('mainCtrl', function($scope, $state, $window,
-    settingsService, machineService, warningService) {
+app.controller('mainCtrl', function($scope, $state, $window, hotkeys,
+    settingsService, machineService, warningService, fileService) {
   settingsService.load();
   $state.go("controlpanel");
 
@@ -82,5 +82,35 @@ app.controller('mainCtrl', function($scope, $state, $window,
   // Setup resize events.
   $window.addEventListener('resize', function() {
     $scope.$broadcast('resize');
+  });
+
+  // Global keyboard commands.
+  hotkeys.add({
+    combo: 'mod+o',
+    description: 'open file',
+    callback: function() {
+      $state.go("loadfile");
+      fileService.openFile();
+    }
+  });
+  hotkeys.add({
+    combo: 'mod+1',
+    description: 'show control panel',
+    callback: function() {$state.go('controlpanel');}
+  });
+  hotkeys.add({
+    combo: 'mod+2',
+    description: 'show load file',
+    callback: function() {$state.go('loadfile');}
+  });
+  hotkeys.add({
+    combo: 'mod+3',
+    description: 'show settings',
+    callback: function() {$state.go('settings');}
+  });
+  hotkeys.add({
+    combo: 'mod+4',
+    description: 'show about',
+    callback: function() {$state.go('about');}
   });
 });
