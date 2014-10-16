@@ -5,16 +5,16 @@
       <table width="100%">
         <tr>
           <td>
-            <em ng-if="!fileName">empty workspace</em>
-            <span ng-if="fileName">
-              <strong>{{fileName}}</strong>
-              <small>(last modified {{fileLastModified}})</small>
+            <em ng-if="!fileService.fileName">empty workspace</em>
+            <span ng-if="fileService.fileName">
+              <strong>{{fileService.fileName}}</strong>
+              <small>(last modified {{fileService.fileLastModified}})</small>
             </span>
           </td>
           <td align="right">
             <span class="btn-toolbar-inline">
               <div class="btn-group btn-group-sm">
-                <button class="btn btn-primary" ng-click="openFile()">
+                <button class="btn btn-primary" ng-click="fileService.openFile()">
                   <span class="glyphicon glyphicon-open"></span>
                   open local file
                 </button>

@@ -1,127 +1,7 @@
-app.controller('loadFileCtrl', function($scope, $state, settingsService, machineService) {
+app.controller('loadFileCtrl', function($scope, $state,
+    settingsService, machineService, fileService) {
   $scope.machineService = machineService;
-  $scope.fileName = null;
-  $scope.fileLastModified = null;
-
-  $scope.openFile = function() {
-    chrome.fileSystem.chooseEntry({
-      'type': 'openFile',
-      'accepts': [{
-        'description': 'gcode files',
-        'extensions': ['gcode', 'nc']
-      }]
-    }, function(entry) {
-      entry.file(function(file) {
-        $scope.$apply(function() {
-          processFile(file);
-        });
-      });
-    });
-  };
-
-  // This method is for handling drag-and-drop files.
-  var handleFileSelect = function(evt) {
-    evt.stopPropagation();
-    evt.preventDefault();
-
-    var files;
-    if (evt.target.files) {
-      files = evt.target.files; // FileList object
-    } else if (evt.dataTransfer) {
-      files = evt.dataTransfer.files; // FileList object.
-    } else {
-      console.log("unknown file input");
-    }
-
-    // only examine the first file.
-    if (files.length > 0) {
-      $scope.$apply(function() {
-        processFile(files[0]);
-      });
-    } else {
-      console.log("input file had no content.");
-    }
-  }
-
-  var processFile = function(f) {
-    $scope.fileName = f.name;
-    $scope.fileLastModified = moment(f.lastModifiedDate).fromNow();
-
-    // TODO: don't read binary files.
-
-    console.log("processing file: " + f.name);
-    console.time("readFile");
-    var reader = new FileReader();
-    reader.onloadend = function(evt) {
-      if (evt.target.readyState == FileReader.DONE) {
-        console.timeEnd("readFile");
-        $scope.commandSequence = extractCommandSequence(evt.target.result);
-        renderGcode($scope.commandSequence);
-      }
-    };
-    reader.readAsText(f);
-  }
-
-  /* Break a string of gcode text into a sequence of commands. */
-  var extractCommandSequence = function(text) {
-    console.time("extractCommandSequence");
-
-    // Break the raw text into a command sequence.
-    var commandSequence = [];
-    var currentCommand = [];
-    var inSemicolonComment = false;
-    var inParenComment = false;
-    for (var i = 0; i < text.length; i++) {
-      // Deal with comments in the file.
-      var c = text[i];
-      if (inSemicolonComment) {
-        if (c == "\n") {
-          inSemicolonComment = false;
-        }
-        continue;
-      } else if (c == ";") {
-        inSemicolonComment = true;
-        continue;
-      }
-
-      if (inParenComment) {
-        if (c == ")") {
-          inParenComment = false;
-        }
-        continue;
-      } else if (c == "(") {
-        inParenComment = true;
-        continue;
-      }
-
-      // Check for the start of a new command.
-      if (c == "G" || c == "M") {
-        currentCommand = currentCommand.join("").trim().toUpperCase();
-        if (currentCommand.length > 0) {
-          commandSequence.push(currentCommand);
-        }
-        currentCommand = [];
-      }
-
-      // Skip existing newlines.
-      if (c == "\n" || c == "\t") {
-        c = " ";
-      }
-
-      // Copy each character over.
-      currentCommand.push(c);
-    }
-
-    // Don't forget about the very last command.
-    currentCommand = currentCommand.join("").trim().toUpperCase();
-    if (currentCommand.length > 0) {
-      commandSequence.push(currentCommand);
-    }
-    currentCommand = [];
-
-    console.timeEnd("extractCommandSequence");
-    return commandSequence;
-  }
+  $scope.fileService = fileService;
 
   /* Resize the paperjs view to fit everything rendered. */
   var resizeView = function() {
@@ -430,8 +310,9 @@ app.controller('loadFileCtrl', function($scope, $state, settingsService, machine
 
     console.timeEnd("renderGcode");
   }
-
-  $scope.commandSequence = [];
+  $scope.$on('fileUpdated', function() {
+    renderGcode(fileService.commandSequence);
+  });
 
   $scope.sendFileToMachine = function() {
     console.log("enqueing file command sequence.");
@@ -441,7 +322,7 @@ app.controller('loadFileCtrl', function($scope, $state, settingsService, machine
           settingsService.settings.gcode_preamble.split("\n"));
     }
 
-    machineService.enqueueCommands($scope.commandSequence);
+    machineService.enqueueCommands(fileService.commandSequence);
 
     if (settingsService.settings.gcode_postamble) {
       machineService.enqueueCommands(
@@ -455,10 +336,10 @@ app.controller('loadFileCtrl', function($scope, $state, settingsService, machine
   paper.setup($("#render-canvas")[0]);
 
   // Render an empty workspace.
-  renderGcode($scope.commandSequence);
+  renderGcode(fileService.commandSequence);
 
   // Setup the drag-and-drop listeners.
-  $("#render-canvas-holder")[0].addEventListener('drop', handleFileSelect, false);
+  $("#render-canvas-holder")[0].addEventListener('drop', fileService.handleFileSelect, false);
 
   // Update the size of various elements to fill the screen.
   var resize = function() {
