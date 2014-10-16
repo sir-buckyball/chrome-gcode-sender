@@ -1,4 +1,4 @@
-app.controller('loadFileCtrl', function($scope, $state,
+app.controller('loadFileCtrl', function($scope, $state, hotkeys,
     settingsService, machineService, fileService) {
   $scope.machineService = machineService;
   $scope.fileService = fileService;
@@ -315,6 +315,10 @@ app.controller('loadFileCtrl', function($scope, $state,
   });
 
   $scope.sendFileToMachine = function() {
+    if (!machineService.isConnected) {
+      console.log("machine not connected. cannot send file.");
+      return;
+    }
     console.log("enqueing file command sequence.");
 
     if (settingsService.settings.gcode_preamble) {
@@ -351,4 +355,12 @@ app.controller('loadFileCtrl', function($scope, $state,
   };
   $scope.$on('resize', resize);
   resize();
+
+  // Keybindings.
+  hotkeys.bindTo($scope)
+    .add({
+      combo: 'mod+p',
+      description: 'send gcode to machine',
+      callback: $scope.sendFileToMachine
+    });
 });
