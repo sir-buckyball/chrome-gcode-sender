@@ -82,28 +82,28 @@
       <div class="panel-body">
         <form class="form-horizontal" role="form" action="#">
 
-          <div class="checkbox">
+          <label class="checkbox-inline">
             <input name="show-estop" type="checkbox" ng-model="settings.workspace_show_estop">
-            <label for="show-estop">show e-stop button</label>
-          </div>
-
-          <div class="checkbox">
+            show e-stop button
+          </label>
+          <br/>
+          <label class="checkbox-inline">
             <input name="show-spindle" type="checkbox" ng-model="settings.workspace_show_spindle">
-            <label for="show-spindle">show spindle controls</label>
-          </div>
-
-          <div class="checkbox">
+            show spindle controls
+          </label>
+          <br/>
+          <label class="checkbox-inline">
             <input name="show-home" type="checkbox" ng-model="settings.workspace_show_home">
-            <label for="show-home">show homing controls</label>
-          </div>
-
-          <div class="checkbox">
+            show homing controls
+          </label>
+          <br/>
+          <label class="checkbox-inline">
             <input name="show-zero" type="checkbox" ng-model="settings.workspace_show_zero">
-            <label for="show-zero">show zeroing controls</label>
-          </div>
+            show zeroing controls
+          </label>
         </form>
       </div>
-    </div>        
+    </div>
 
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -118,13 +118,13 @@
             <p class="help-block">Feedrate used when jogging (mm/min). 0 omits feedrate.</p>
           </div>
 
-          <div class="checkbox">
+          <label class="checkbox-inline">
             <input id="input-jog-rapid" type="checkbox" ng-model="settings.workspace_jog_rapid">
-            <label for="input-job-rapid">rapid movement (G0)</label>
+            rapid movement (G0)
             <p class="help-block">faster, but non-linear movements.</p>
-          </div>
+          </label>
         </form>
       </div>
-    </div>        
+    </div>
   </div>
 </div>
