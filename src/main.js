@@ -94,6 +94,17 @@ app.controller('mainCtrl', function($scope, $state, $window, hotkeys,
     }
   });
   hotkeys.add({
+    combo: 'mod+k',
+    description: 'connect/disconnect',
+    callback: function() {
+      if (machineService.isConnected) {
+        $scope.disconnect();
+      } else {
+        $scope.connect();
+      }
+    }
+  });
+  hotkeys.add({
     combo: 'mod+1',
     description: 'show control panel',
     callback: function() {$state.go('controlpanel');}
