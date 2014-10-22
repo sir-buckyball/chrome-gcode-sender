@@ -1,32 +1,6 @@
 // author: Buck Clay (dev@buckclay.com)
 // date: 2013-12-25
 
-// TODO: something is causing it to be terribly slow...
-// TODO: come back to load file, previous file is gone... (state loss)
-
-
-/**
- * Clear the command queue.
- */
-function clearCommandQueue() {
-  window.workspaceCommandQueue = [];
-  window.workspacePendingAck = false;
-  $("#lbl-enqueued-command-count").text(0);
-}
-
-
-$(document).ready(function() {
-  // configure the console actions.
-  $("#lnk-clear-log").click(function(e) {
-    $("#console-log").html("");
-  });
-  $("#lnk-clear-command-queue").click(clearCommandQueue);
-  $("#lnk-clear-ack-block").click(function(e) {
-    window.workspacePendingAck = false;
-  });
-});
-
-
 // Configure AngularJS.
 var app = angular.module('gcodeSender', ['ui.router', 'luegg.directives', 'cfp.hotkeys']);
 
