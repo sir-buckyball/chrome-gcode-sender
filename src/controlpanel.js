@@ -90,7 +90,7 @@ app.controller('controlPanelCtrl', function($scope, $timeout,
   $scope.sendManualCommand = function(command) {
     manualInputHistory.push(command);
     manualInputPosition = manualInputHistory.length;
-    machineService.enqueueCommands([command]);
+    machineService.enqueueCommands([command + '\n']);
     $scope.manualCommand = "";
   }
 
@@ -147,10 +147,10 @@ app.controller('controlPanelCtrl', function($scope, $timeout,
 
     var commands = [];
     if (!machineService.isRelativeMode) {
-      commands.push("G91");
+      commands.push("G91\n");
     }
     if (!machineService.isMm) {
-      commands.push("G21");
+      commands.push("G21\n");
     }
 
     var feedrate = settingsService.settings.workspace_jog_feedrate;
@@ -161,7 +161,7 @@ app.controller('controlPanelCtrl', function($scope, $timeout,
       mv += " F" + feedrate;
     }
     mv += " " + axis + $scope.getStepSize();
-    commands.push(mv);
+    commands.push(mv + '\n');
 
     machineService.enqueueCommands(commands);
   };

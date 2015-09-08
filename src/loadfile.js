@@ -323,14 +323,14 @@ app.controller('loadFileCtrl', function($scope, $state, hotkeys,
 
     if (settingsService.settings.gcode_preamble) {
       machineService.enqueueCommands(
-          settingsService.settings.gcode_preamble.split("\n"));
+        extractCommandSequence(settingsService.settings.gcode_preamble));
     }
 
     machineService.enqueueCommands(fileService.commandSequence);
 
     if (settingsService.settings.gcode_postamble) {
       machineService.enqueueCommands(
-          settingsService.settings.gcode_postamble.split("\n"));
+          extractCommandSequence(settingsService.settings.gcode_postamble));
     }
 
     $state.go("controlpanel");

@@ -193,7 +193,7 @@ app.service('machineService', function($rootScope, $timeout, warningService) {
     }
 
     // Actually send the command.
-    chrome.serial.send(connectionId, str2ab(cmd + "\n"), function(info) {
+    chrome.serial.send(connectionId, str2ab(cmd), function(info) {
       if (info.error) {
         warningService.warn("cmd", "failed to send command: " + info.error);
       }
@@ -248,10 +248,10 @@ app.service('machineService', function($rootScope, $timeout, warningService) {
     api.commandQueue = [];
 
     // Send the command to perform an emergency stop.
-    sendCommandToSerialConnection("M112", true);
+    sendCommandToSerialConnection("M112\n", true);
 
     // Send an ascii cancel command.
-    sendCommandToSerialConnection("\x18", true);
+    sendCommandToSerialConnection("\x18\n", true);
   }
 
   // Return the "API" for this service.

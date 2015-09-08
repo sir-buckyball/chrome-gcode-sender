@@ -85,13 +85,13 @@
     <div class="control-section">
       <div class="distributed-box" ng-show="settings.workspace_show_home">
         <button class="btn btn-default flex"
-            ng-click="sendCommands(['G28 X0'])"
+            ng-click="sendCommands(['G28 X0\n'])"
             ng-disabled="!machineService.isConnected">Home X</button>
         <button class="btn btn-default flex"
-            ng-click="sendCommands(['G28 Y0'])"
+            ng-click="sendCommands(['G28 Y0\n'])"
             ng-disabled="!machineService.isConnected">Home Y</button>
         <button class="btn btn-default flex"
-            ng-click="sendCommands(['G28 Z0'])"
+            ng-click="sendCommands(['G28 Z0\n'])"
             ng-disabled="!machineService.isConnected">Home Z</button>
       </div>
     </div>
@@ -99,13 +99,13 @@
     <div class="control-section">
       <div class="distributed-box" ng-show="settings.workspace_show_zero">
         <button class="btn btn-default flex"
-            ng-click="sendCommands(['G92 X0'])"
+            ng-click="sendCommands(['G92 X0\n'])"
             ng-disabled="!machineService.isConnected">Zero X</button>
         <button class="btn btn-default flex"
-            ng-click="sendCommands(['G92 Y0'])"
+            ng-click="sendCommands(['G92 Y0\n'])"
             ng-disabled="!machineService.isConnected">Zero Y</button>
         <button class="btn btn-default flex"
-            ng-click="sendCommands(['G92 Z0'])"
+            ng-click="sendCommands(['G92 Z0\n'])"
             ng-disabled="!machineService.isConnected">Zero Z</button>
       </div>
     </div>
@@ -114,11 +114,11 @@
       <h4>spindle controls</h4>
       <div class="distributed-box">
         <button class="btn btn-default flex"
-            ng-click="sendCommands(['M3'])" ng-disabled="!machineService.isConnected">↻</button>
+            ng-click="sendCommands(['M3\n'])" ng-disabled="!machineService.isConnected">↻</button>
         <button class="btn btn-default flex"
-            ng-click="sendCommands(['M4'])" ng-disabled="!machineService.isConnected">↺</button>
+            ng-click="sendCommands(['M4\n'])" ng-disabled="!machineService.isConnected">↺</button>
         <button class="btn btn-default flex"
-            ng-click="sendCommands(['M5'])" ng-disabled="!machineService.isConnected">⊘</button>
+            ng-click="sendCommands(['M5\n'])" ng-disabled="!machineService.isConnected">⊘</button>
       </div>
     </div>
   </span>

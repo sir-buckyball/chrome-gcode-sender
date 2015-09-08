@@ -39,6 +39,77 @@ function breakupGcodeCommand(cmd) {
 }
 
 /**
+ * Break a string of gcode text into a sequence of commands.
+ *
+ * @param {string} text - text to parse into gcode commands
+ * @return {string[]} A list of commands (with newline characters)
+ */
+function extractCommandSequence(text) {
+  var commandSequence = [];
+  var currentCommand = [];
+  var inSemicolonComment = false;
+  var inParenComment = false;
+
+  var addSequence = function(sequence) {
+    currentCommand = currentCommand.join('').trim().toUpperCase();
+    if (currentCommand.length > 0) {
+      commandSequence.push(currentCommand + '\n');
+    }
+    currentCommand = [];
+  };
+
+  // Break the raw text into a command sequence.
+  for (var i = 0; i < text.length; i++) {
+    // Deal with comments in the file.
+    var c = text[i];
+    if (inSemicolonComment) {
+      if (c == '\n') {
+        inSemicolonComment = false;
+      }
+      continue;
+    } else if (c == ';') {
+      inSemicolonComment = true;
+      continue;
+    }
+
+    if (inParenComment) {
+      if (c == ')') {
+        inParenComment = false;
+      }
+      continue;
+    } else if (c == '(') {
+      inParenComment = true;
+      continue;
+    }
+
+    // Check for the start of a new command.
+    if (c == 'G' || c == 'M' || c == '\r') {
+      addSequence()
+
+      // Update the previous command to end with a carriage return if this new
+      // command starts with one.
+      if (c == '\r' && commandSequence.length > 0) {
+        var j = commandSequence.length - 1;
+        commandSequence[j] = commandSequence[j].replace('\n', '\r');
+      }
+    }
+
+    // Skip existing newlines.
+    if (c == '\n' || c == '\t') {
+      c = ' ';
+    }
+
+    // Copy each character over.
+    currentCommand.push(c);
+  }
+
+  // Don't forget about the very last command.
+  addSequence()
+
+  return commandSequence;
+};
+
+/**
  * Analyze the given gcode to determine the following properties:
  *  - bounding region {min,max}{X,Y,Z}
  *  - estimated execution time
