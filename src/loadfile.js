@@ -109,12 +109,16 @@ app.controller('loadFileCtrl', function($scope, $state, hotkeys,
 
     console.time("renderGcode: gcode processing");
     var path = null;
+    var prevInstruction = "";
     for (var i = 0; i < commandSequence.length; i++) {
-      var command = commandSequence[i];
+      var command = prevInstruction + commandSequence[i];
       var parts = breakupGcodeCommand(command);
 
       var cType = parts[0][0];
       var cNum = parseInt(parts[0].substr(1), 10);
+
+      // The carriage return can pass new arguments to the previous command.
+      prevInstruction = command.endsWith('\r') ? cType + cNum + " " : "";
 
       // Read the command parameters.
       var params = {};
