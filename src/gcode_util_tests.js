@@ -1,4 +1,4 @@
-QUnit.module("fileservice: extractCommandSequence");
+QUnit.module("gcode_util: extractCommandSequence");
 
 QUnit.test("newline delimited", function() {
   var expected = [
@@ -32,4 +32,69 @@ QUnit.test("carriage returns", function() {
   var input = "G90 G1 Z0.25 F20\rX1.125 Y1.125 F10\rZ-0.1 F5";
   var actual = extractCommandSequence(input);
   QUnit.equal(JSON.stringify(actual), JSON.stringify(expected));
+});
+
+QUnit.module("gcode_util: analyzeGcode");
+
+QUnit.test("empty", function() {
+  var expected = {
+    "estimatedExecutionTimeMin": 0,
+    "maxPos": {"X": 0, "Y": 0, "Z": 0},
+    "minPos": {"X": 0, "Y": 0, "Z": 0},
+    "warnings": {}
+  }
+  var input = [
+    "G21\n",
+    "G90\n",
+  ];
+  QUnit.deepEqual(analyzeGcode(input), expected);
+});
+
+QUnit.test("base", function() {
+  var expected = {
+    "estimatedExecutionTimeMin": 15,
+    "maxPos": {
+      "X": 100,
+      "Y": 100,
+      "Z": 0
+    },
+    "minPos": {
+      "X": 0,
+      "Y": 0,
+      "Z": 0
+    },
+    "warnings": {}
+  }
+  var input = [
+    "G21\n",
+    "G90\n",
+    "G0 X100 F10\n",
+    "G1 Y100 F20\n",
+  ];
+  QUnit.deepEqual(analyzeGcode(input), expected);
+});
+
+
+QUnit.test("carriage returns", function() {
+  var expected = {
+    "estimatedExecutionTimeMin": 15,
+    "maxPos": {
+      "X": 100,
+      "Y": 100,
+      "Z": 0
+    },
+    "minPos": {
+      "X": 0,
+      "Y": 0,
+      "Z": 0
+    },
+    "warnings": {}
+  }
+  var input = [
+    "G21\n",
+    "G90\n",
+    "G0 X100 F10\r",
+    "Y100 F20\n",
+  ];
+  QUnit.deepEqual(analyzeGcode(input), expected);
 });

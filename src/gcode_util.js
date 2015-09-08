@@ -140,14 +140,18 @@ function analyzeGcode(gcode) {
   // management which will affect actual time.
   var feedrate = 1000000000;
   var estimatedExecutionTimeMin = 0;
+  var prevInstruction = "";
 
   for (var i = 0; i < gcode.length; i++) {
     var prevPos = {"X": pos.X, "Y": pos.Y, "Z": pos.Z};
-    var command = gcode[i];
+    var command = prevInstruction + gcode[i];
     var parts = breakupGcodeCommand(command);
 
     var cType = parts[0][0];
     var cNum = parseInt(parts[0].substr(1), 10);
+
+    // The carriage return can pass new arguments to the previous command.
+    prevInstruction = command.endsWith('\r') ? cType + cNum + " " : "";
 
     // Read the command parameters.
     var params = {};
