@@ -49,13 +49,16 @@ function extractCommandSequence(text) {
   var currentCommand = [];
   var inSemicolonComment = false;
   var inParenComment = false;
+  var isPossibleCRLF = false;
+  var endChar = '\n';
 
   var addSequence = function(sequence) {
     currentCommand = currentCommand.join('').trim().toUpperCase();
     if (currentCommand.length > 0) {
-      commandSequence.push(currentCommand + '\n');
+      commandSequence.push(currentCommand + endChar);
     }
     currentCommand = [];
+    endChar = '\n';
   };
 
   // Break the raw text into a command sequence.
@@ -82,20 +85,29 @@ function extractCommandSequence(text) {
       continue;
     }
 
-    // Check for the start of a new command.
-    if (c == 'G' || c == 'M' || c == '\r') {
-      addSequence()
-
-      // Update the previous command to end with a carriage return if this new
-      // command starts with one.
-      if (c == '\r' && commandSequence.length > 0) {
-        var j = commandSequence.length - 1;
-        commandSequence[j] = commandSequence[j].replace('\n', '\r');
+    // A carriage return not followed by a newline ends a sequence.
+    if (isPossibleCRLF) {
+      if (c != '\n') {
+        addSequence();
       }
+      isPossibleCRLF = false;
+    }
+
+    // Track if we should use a newline or a carriage return character.
+    if (c == '\r' || c == '\n') {
+      endChar = c;
+    }
+    if (c == '\r') {
+      isPossibleCRLF = true;
+    }
+
+    // Check for the start of a new command.
+    if (c == 'G' || c == 'M') {
+      addSequence();
     }
 
     // Skip existing newlines.
-    if (c == '\n' || c == '\t') {
+    if (c == '\n' || c == '\t' || c == '\r') {
       c = ' ';
     }
 

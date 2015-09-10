@@ -34,6 +34,17 @@ QUnit.test("carriage returns", function() {
   QUnit.equal(JSON.stringify(actual), JSON.stringify(expected));
 });
 
+QUnit.test("CRLF", function() {
+  var expected = [
+    "G90\n",
+    "G1 X10 F20\n",
+    "G0 Y20 Z5\n",
+  ];
+  var input = "G90\r\nG1 X10 F20\r\n\r\nG0 Y20 Z5\r\n";
+  var actual = extractCommandSequence(input);
+  QUnit.equal(JSON.stringify(actual), JSON.stringify(expected));
+});
+
 QUnit.module("gcode_util: analyzeGcode");
 
 QUnit.test("empty", function() {
