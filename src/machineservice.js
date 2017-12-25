@@ -230,8 +230,12 @@ app.service('machineService', function($rootScope, $timeout, warningService) {
 
   // Log errors
   chrome.serial.onReceiveError.addListener(function(info) {
+    if (info.error === "break") {
+      chrome.serial.setPaused(info.connectionId, false, function() {});    
+    } else {
     warningService.warn("connection", "error with serial communication: " + info.error);
     $rootScope.$apply();
+    }
   });
 
   /**
