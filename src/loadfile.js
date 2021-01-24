@@ -284,6 +284,9 @@ app.controller('loadFileCtrl', function($scope, $state, hotkeys,
           msg = "unimplemented gcode command: " + parts[0];
           warnings[msg] = (warnings[msg] || 0) + 1;
         }
+      } else if (cType == "$") {
+        // Set variables (non-standard?)
+        continue;
       } else {
         msg = "unknown gcode command: " + parts[0];
         warnings[msg] = (warnings[msg] || 0) + 1;

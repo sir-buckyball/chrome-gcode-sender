@@ -102,7 +102,7 @@ function extractCommandSequence(text) {
     }
 
     // Check for the start of a new command.
-    if (c == 'G' || c == 'M') {
+    if (c == 'G' || c == 'M' || c == '$') {
       addSequence();
     }
 
@@ -262,6 +262,9 @@ function analyzeGcode(gcode) {
       }
     } else if (cType == "M") {
       // M codes can safely be ignored.
+      continue;
+    } else if (cType == "$") {
+      // Setting variables can safely be ignored.
       continue;
     } else {
       msg = "unknown gcode command: " + parts[0];
